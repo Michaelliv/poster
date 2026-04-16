@@ -1,9 +1,18 @@
 {
   "name": "poster-cli",
   "version": "0.1.0",
-  "description": "Single-file distributable React posters — live in the browser, exportable to PNG/SVG/PDF/JPG/WebP via headless Chrome",
+  "description": "Single-file distributable React posters — one .tsx file, every format you'll ever need. Works as a CLI and as a library.",
   "type": "module",
-  "main": "dist/main.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
   "bin": {
     "poster": "./dist/main.js"
   },

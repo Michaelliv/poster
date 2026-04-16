@@ -1,22 +1,60 @@
 # Poster
 
-> Single-file distributable React posters.
+> One `.tsx` file, every format you'll ever need.
 
-One `.tsx` file with a default-exported React component → one `.html` file that opens in any browser, renders live, and exports itself as PNG, SVG, JPG, WebP, or PDF.
+A default-exported React component compiles to a self-contained `.html` file and renders to PNG / SVG / JPG / WebP / PDF via headless Chrome. Works as a **CLI** and as a **library**.
 
 ## Install
 
 ```bash
-npm install -g poster-cli
+npm install -g poster-cli        # CLI
+npm install poster-cli           # library
 ```
 
-## Quick start
+## CLI
 
 ```bash
 poster build app.tsx -o app.html            # standalone .html
 poster build app.tsx -o app.html --og       # ...with og:image baked in
 poster export app.tsx -o out.png            # render via headless Chrome
+
+cat app.tsx | poster export - -o out.png    # or pipe TSX on stdin
 ```
+
+Any entry of `-` reads TSX from stdin and persists to `.poster/<basename>.tsx`
+so an agent can iterate on it next run. Pass `--ephemeral` to skip persistence.
+
+## Library
+
+```ts
+import { writeFileSync } from "node:fs";
+import { Poster } from "poster-cli";
+
+const poster = new Poster();
+
+// TSX → self-contained HTML string
+const html = await poster.buildHtml(
+  { tsx: `export default () => <h1 className="text-5xl">Hi</h1>` },
+  { title: "Hello", width: 1200, height: 600 },
+);
+
+// TSX → PNG Buffer (also jpg / webp / pdf → Buffer, svg → string)
+const png = await poster.render(
+  { tsx: source },
+  { format: "png", width: 1600, height: 900 },
+);
+writeFileSync("poster.png", png);
+
+// Or render a file on disk
+const pdf = await poster.render(
+  { file: "./app.tsx" },
+  { format: "pdf", width: 1400, height: 1800 },
+);
+```
+
+Inputs are discriminated: `{ tsx }` for in-memory source, `{ file }` for a
+path on disk. No side effects — the SDK returns data; the caller writes it.
+Errors throw; no `process.exit` from inside the library.
 
 ## Authoring a poster
 
@@ -41,11 +79,9 @@ export default function App() {
 
 Use anything that works in the browser — Recharts, lucide-react, Tailwind classes (via CDN), shadcn/ui, lodash. No authoring constraints.
 
-## Export
+## Export pipeline
 
-Every built poster ships with a floating toolbar (bottom-right): **PNG · SVG · WebP · PDF**. Captures via [snapDOM](https://github.com/zumerlab/snapdom) — no browser fidelity loss, no Satori-subset limits.
-
-For server-side exports (CI, scripts, OG generation), `poster export` uses a headless browser via `puppeteer-core`. Resolution order at runtime: system Chrome / Brave / Edge (preferred — warmer, newer), then a bundled `chrome-headless-shell` that was downloaded by the package's postinstall step.
+Exports go through a headless browser via `puppeteer-core` — screenshotting the rendered DOM so there's no Satori-subset fidelity loss. Resolution order at runtime: system Chrome / Brave / Edge (preferred — warmer, newer), then a bundled `chrome-headless-shell` that was downloaded by the package's postinstall step.
 
 ### Browser install
 
@@ -65,7 +101,9 @@ If the download fails (offline, corporate proxy, etc.), the install still succee
 
 ## For agents
 
-Every command supports `--json` for machine-readable output.
+Every CLI command supports `--json` for machine-readable output. Combined
+with stdin entries (`poster export - -o out.png`), an agent can generate
+visuals in a single pass with no filesystem scaffolding.
 
 ## License
 
