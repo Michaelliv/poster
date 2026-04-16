@@ -1,0 +1,31 @@
+# Compiled binaries
+poster
+poster-*
+
+# Logs
+*.log
+
+# Dependencies
+node_modules/
+
+# TypeScript
+*.tsbuildinfo
+
+# Build output
+dist
+
+# Bun
+bun.lockb
+bun.lock
+
+# dotenv
+.env
+.env.local
+.env.*.local
+
+# Example output
+examples/*.html
+!examples/README.md
+
+# OS
+.DS_Store

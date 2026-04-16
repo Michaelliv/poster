@@ -1,0 +1,63 @@
+{
+  "name": "poster-cli",
+  "version": "0.1.0",
+  "description": "Single-file distributable React posters — live in the browser, exportable as PNG/SVG/PDF via Satori",
+  "type": "module",
+  "main": "dist/main.js",
+  "bin": {
+    "poster": "./dist/main.js"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc && bun run scripts/copy-runtime.ts",
+    "prepublishOnly": "npm run build",
+    "dev": "bun run src/main.ts",
+    "build:bun": "bun build --compile src/main.ts --outfile poster",
+    "build:bun-linux": "bun build --compile --target=bun-linux-x64 src/main.ts --outfile poster-linux-x64",
+    "build:bun-mac-arm": "bun build --compile --target=bun-darwin-arm64 src/main.ts --outfile poster-darwin-arm64",
+    "build:bun-mac-x64": "bun build --compile --target=bun-darwin-x64 src/main.ts --outfile poster-darwin-x64",
+    "test": "bun test",
+    "format": "bunx biome format --write src/",
+    "lint": "bunx biome lint src/",
+    "check": "bunx biome check src/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Michaelliv/poster.git"
+  },
+  "homepage": "https://github.com/Michaelliv/poster#readme",
+  "bugs": {
+    "url": "https://github.com/Michaelliv/poster/issues"
+  },
+  "keywords": ["react", "satori", "png-export", "single-file", "distributable", "charts", "recharts"],
+  "license": "MIT",
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.14",
+    "@types/d3-scale": "^4.0.9",
+    "@types/d3-shape": "^3.1.8",
+    "@types/lodash": "^4.17.24",
+    "@types/node": "^22.0.0",
+    "@types/papaparse": "^5.5.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.8.0"
+  },
+  "dependencies": {
+    "@resvg/resvg-wasm": "^2.6.2",
+    "chalk": "^5.6.2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "commander": "^14.0.3",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
+    "esbuild": "^0.24.0",
+    "jspdf": "^4.2.1",
+    "lodash": "^4.18.1",
+    "lucide-react": "^1.8.0",
+    "papaparse": "^5.5.3",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "recharts": "^3.8.1",
+    "satori": "^0.26.0"
+  }
+}
