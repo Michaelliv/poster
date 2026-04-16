@@ -87,164 +87,6 @@ const pdf = await poster.render(
   `ExportFormat`, `DEFAULTS` all exported.
 
 ---
-
-## What it looks like
-
-**53 worked examples** live under [`examples/`](./examples), each one a single `.tsx` file rendered through the same pipeline. Every agent-generated example has its prompt saved as a paired `.txt` so you can see exactly what produced it.
-
-<table>
-  <tr>
-    <td width="33%"><img src="examples/showcase.png" alt="showcase — multi-chart product analytics" /></td>
-    <td width="33%"><img src="examples/vinyl.png" alt="vinyl — Blue Note jazz cover" /></td>
-    <td width="33%"><img src="examples/comicbook.png" alt="comicbook — 1987 Marvel-style cover" /></td>
-  </tr>
-  <tr>
-    <td><strong><a href="examples/showcase.tsx">showcase</a></strong> — five Recharts visualizations on one canvas, glowing cards, dark gradient theme.</td>
-    <td><strong><a href="examples/vinyl.tsx">vinyl</a></strong> — Reid Miles / Blue Note 1962 album cover. Single bold abstract shape, sans-serif credits, cream paper.</td>
-    <td><strong><a href="examples/comicbook.tsx">comicbook</a></strong> — full 1987 comic apparatus: Comics Code stamp, UPC barcode, Direct Edition badge.</td>
-  </tr>
-  <tr>
-    <td width="33%"><img src="examples/festival.png" alt="festival — Aurora Sound lineup" /></td>
-    <td width="33%"><img src="examples/illuminated.png" alt="illuminated — medieval manuscript page" /></td>
-    <td width="33%"><img src="examples/leaderboard.png" alt="leaderboard — GitHub trending repos" /></td>
-  </tr>
-  <tr>
-    <td><strong><a href="examples/festival.tsx">festival</a></strong> — Reykjavík lineup with strict tier hierarchy (3 huge headliners → 14 small support).</td>
-    <td><strong><a href="examples/illuminated.tsx">illuminated</a></strong> — medieval Latin chronicle with gold drop-cap, vine flourishes, marginalia.</td>
-    <td><strong><a href="examples/leaderboard.tsx">leaderboard</a></strong> — weekly GitHub trending table with realistic deltas and language dots.</td>
-  </tr>
-  <tr>
-    <td width="33%"><img src="examples/editorial.png" alt="editorial — climate data spread" /></td>
-    <td width="33%"><img src="examples/bloomberg.png" alt="bloomberg — amber-on-black terminal" /></td>
-    <td width="33%"><img src="examples/wrapped.jpg" alt="wrapped — year in review" /></td>
-  </tr>
-  <tr>
-    <td><strong><a href="examples/editorial.tsx">editorial</a></strong> — magazine-grade climate spread, Source Serif 4 masthead, sector breakdown chart.</td>
-    <td><strong><a href="examples/bloomberg.tsx">bloomberg</a></strong> — Bloomberg Terminal mimicry: amber-on-black, mono grid, dense ticker rows.</td>
-    <td><strong><a href="examples/wrapped.tsx">wrapped</a></strong> — saturated radial gradient, 220px hero number, top-artist bars.</td>
-  </tr>
-</table>
-
-Also in `examples/`: pricing tables, recipe cards, weather forecasts, Tokyo subway schematics, NASA mission patches, tarot cards, boarding passes, wine labels, anatomical diagrams, Sankey budgets, Soviet propaganda, NYT crosswords, baseball scorecards, family trees, and more. Each is a single `.tsx` of 150–400 lines. No shared helpers — copy the one you like and make it yours.
-
----
-
-## Authoring
-
-A poster is a file that default-exports a React component. **The root element declares the canvas** via `w-[Npx]` — the renderer measures it and crops the screenshot to that exact box. Add `h-[Npx]` only if you need a fixed aspect (story format, OG image); otherwise let the height grow with content.
-
-```tsx
-import { AreaChart, Area, XAxis, YAxis } from "recharts";
-import { SparklesIcon } from "lucide-react";
-
-const data = Array.from({ length: 24 }, (_, i) => ({
-  h: i,
-  v: 50 + Math.sin(i * 0.5) * 20,
-}));
-
-export default function App() {
-  return (
-    <div className="w-[1200px] p-10 bg-black text-white">
-      <SparklesIcon className="h-6 w-6" />
-      <h1 className="mt-4 text-5xl font-black">Hello</h1>
-      <div style={{ width: "100%", height: 300 }} className="mt-8">
-        <AreaChart data={data} width={1100} height={300}>
-          <XAxis dataKey="h" />
-          <YAxis />
-          <Area dataKey="v" stroke="#22d3ee" fill="#22d3ee40" />
-        </AreaChart>
-      </div>
-    </div>
-  );
-}
-```
-
-**In the box:** React 19, Tailwind (via CDN), [Recharts](https://recharts.org),
-[lucide-react](https://lucide.dev), Inter + Source Serif 4 + JetBrains Mono
-(loaded via Google Fonts so exports are consistent across machines).
-
-**No authoring restrictions** — this isn't Satori. Anything that renders in
-Chrome renders here: hooks, context, `useState`, animations, SVG, CSS
-gradients, `backdrop-filter`, fonts, the lot.
-
----
-
-## Export pipeline
-
-Exports screenshot the rendered DOM through a headless browser
-(`puppeteer-core`). No Satori-subset fidelity loss — what you see in Chrome
-is what lands in the PNG, pixel-for-pixel, at DSF 2 for retina.
-
-**Browser resolution:**
-
-1. `--browser <path>` if given
-2. System Chrome / Brave / Edge / Chromium
-3. Cached `chrome-headless-shell` from `@puppeteer/browsers`
-4. Auto-install (~80 MB) if `--install-browser` is passed
-
-| Format | Quality | Notes |
-|---|---|---|
-| `png` | Lossless, DSF 2 | Transparent background unless poster paints one |
-| `jpg` | Quality 100 | White background from the shell's body |
-| `webp` | Quality 100 | Smallest raster format at comparable fidelity |
-| `pdf` | Vector text + SVG, raster images at 96 DPI | Text stays selectable |
-| `svg` | Scalable, fonts embedded | Captured via snapDOM in-page |
-
-### Browser download
-
-On **global** install (`npm install -g poster-ai`), a postinstall step
-fetches `chrome-headless-shell` (~80 MB) to `~/.cache/poster-browsers/` so
-`poster export` works out of the box. **Local** installs (library
-consumers) skip the download by default — you have your own Chrome, or
-you'll opt in explicitly:
-
-```bash
-POSTER_INSTALL_BROWSER=1 npm install poster-ai   # force download
-POSTER_SKIP_BROWSER_DOWNLOAD=1 npm install -g poster-ai   # force skip
-```
-
-If the download fails (offline, proxy, etc.), install still succeeds. Run
-`poster export --install-browser` later to retry.
-
----
-
-## For agents
-
-- Every CLI command supports `--json` for machine-readable output.
-- Entry `-` reads TSX from stdin, so a single call produces an image with
-  no filesystem scaffolding: `echo '...' | poster export - -o out.png`.
-- Saved `.poster/<name>.tsx` lets the agent iterate on its own output.
-- The SDK (`import { Poster }`) is pure: discriminated input, data out,
-  errors throw. No process control, no ambient logging.
-- The renderer auto-fits the canvas to whatever the root `w-[Npx]` declares,
-  so agents don't have to think about viewport sizes.
-
-For [pi-coding-agent](https://github.com/Michaelliv/pi-coding-agent) users,
-[**pi-poster**](https://github.com/Michaelliv/pi-poster) registers a
-`poster_render` tool plus a comprehensive `poster` skill so the agent
-knows the layout grammar, color systems, font floor, and signature
-patterns up front. 39 of the 53 examples in `examples/` were generated
-through that loop — each one's prompt is saved as a paired `.txt`
-sidecar (`vinyl.png` + `vinyl.tsx` + `vinyl.txt`) so you can see exactly
-what input produced what output.
-
----
-
-## Requirements
-
-- Node 18+
-- macOS, Linux, or Windows
-- Chrome / Brave / Edge installed, **or** ~80 MB for the fallback
-  `chrome-headless-shell`
-
----
-
-## License
-
-MIT.
-
----
-
 <!-- gallery:start -->
 ## Gallery
 
@@ -463,3 +305,118 @@ All 52 examples below render through the same pipeline. Each row pairs the rende
 
 <sub>Regenerate this section with <code>bun scripts/build-gallery.ts</code>.</sub>
 <!-- gallery:end -->
+---
+
+## Authoring
+
+A poster is a file that default-exports a React component. **The root element declares the canvas** via `w-[Npx]` — the renderer measures it and crops the screenshot to that exact box. Add `h-[Npx]` only if you need a fixed aspect (story format, OG image); otherwise let the height grow with content.
+
+```tsx
+import { AreaChart, Area, XAxis, YAxis } from "recharts";
+import { SparklesIcon } from "lucide-react";
+
+const data = Array.from({ length: 24 }, (_, i) => ({
+  h: i,
+  v: 50 + Math.sin(i * 0.5) * 20,
+}));
+
+export default function App() {
+  return (
+    <div className="w-[1200px] p-10 bg-black text-white">
+      <SparklesIcon className="h-6 w-6" />
+      <h1 className="mt-4 text-5xl font-black">Hello</h1>
+      <div style={{ width: "100%", height: 300 }} className="mt-8">
+        <AreaChart data={data} width={1100} height={300}>
+          <XAxis dataKey="h" />
+          <YAxis />
+          <Area dataKey="v" stroke="#22d3ee" fill="#22d3ee40" />
+        </AreaChart>
+      </div>
+    </div>
+  );
+}
+```
+
+**In the box:** React 19, Tailwind (via CDN), [Recharts](https://recharts.org),
+[lucide-react](https://lucide.dev), Inter + Source Serif 4 + JetBrains Mono
+(loaded via Google Fonts so exports are consistent across machines).
+
+**No authoring restrictions** — this isn't Satori. Anything that renders in
+Chrome renders here: hooks, context, `useState`, animations, SVG, CSS
+gradients, `backdrop-filter`, fonts, the lot.
+
+---
+
+## Export pipeline
+
+Exports screenshot the rendered DOM through a headless browser
+(`puppeteer-core`). No Satori-subset fidelity loss — what you see in Chrome
+is what lands in the PNG, pixel-for-pixel, at DSF 2 for retina.
+
+**Browser resolution:**
+
+1. `--browser <path>` if given
+2. System Chrome / Brave / Edge / Chromium
+3. Cached `chrome-headless-shell` from `@puppeteer/browsers`
+4. Auto-install (~80 MB) if `--install-browser` is passed
+
+| Format | Quality | Notes |
+|---|---|---|
+| `png` | Lossless, DSF 2 | Transparent background unless poster paints one |
+| `jpg` | Quality 100 | White background from the shell's body |
+| `webp` | Quality 100 | Smallest raster format at comparable fidelity |
+| `pdf` | Vector text + SVG, raster images at 96 DPI | Text stays selectable |
+| `svg` | Scalable, fonts embedded | Captured via snapDOM in-page |
+
+### Browser download
+
+On **global** install (`npm install -g poster-ai`), a postinstall step
+fetches `chrome-headless-shell` (~80 MB) to `~/.cache/poster-browsers/` so
+`poster export` works out of the box. **Local** installs (library
+consumers) skip the download by default — you have your own Chrome, or
+you'll opt in explicitly:
+
+```bash
+POSTER_INSTALL_BROWSER=1 npm install poster-ai   # force download
+POSTER_SKIP_BROWSER_DOWNLOAD=1 npm install -g poster-ai   # force skip
+```
+
+If the download fails (offline, proxy, etc.), install still succeeds. Run
+`poster export --install-browser` later to retry.
+
+---
+
+## For agents
+
+- Every CLI command supports `--json` for machine-readable output.
+- Entry `-` reads TSX from stdin, so a single call produces an image with
+  no filesystem scaffolding: `echo '...' | poster export - -o out.png`.
+- Saved `.poster/<name>.tsx` lets the agent iterate on its own output.
+- The SDK (`import { Poster }`) is pure: discriminated input, data out,
+  errors throw. No process control, no ambient logging.
+- The renderer auto-fits the canvas to whatever the root `w-[Npx]` declares,
+  so agents don't have to think about viewport sizes.
+
+For [pi-coding-agent](https://github.com/Michaelliv/pi-coding-agent) users,
+[**pi-poster**](https://github.com/Michaelliv/pi-poster) registers a
+`poster_render` tool plus a comprehensive `poster` skill so the agent
+knows the layout grammar, color systems, font floor, and signature
+patterns up front. 39 of the 53 examples in `examples/` were generated
+through that loop — each one's prompt is saved as a paired `.txt`
+sidecar (`vinyl.png` + `vinyl.tsx` + `vinyl.txt`) so you can see exactly
+what input produced what output.
+
+---
+
+## Requirements
+
+- Node 18+
+- macOS, Linux, or Windows
+- Chrome / Brave / Edge installed, **or** ~80 MB for the fallback
+  `chrome-headless-shell`
+
+---
+
+## License
+
+MIT.
