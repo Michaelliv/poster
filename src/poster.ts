@@ -57,8 +57,14 @@ export interface RenderOptions extends BuildOptions {
 
 /** Canvas defaults applied when a build/render option is left unset. */
 export const DEFAULTS = {
+  /** Fallback canvas when width/height aren't given AND auto-fit can't
+   *  measure a sized root. Matches a common desktop poster shape. */
   width: 1440,
   height: 900,
+  /** Auto-fit renders inside this viewport first, then measures the
+   *  #poster-root's first child to get the true canvas. Generous enough
+   *  to fit any sensible poster without clipping. */
+  autoFitViewport: { width: 2400, height: 3600 },
   deviceScaleFactor: 2,
   waitUntil: "networkidle0" as const,
   waitFor: 1500,
@@ -134,10 +140,25 @@ export class Poster {
     html: string,
     options: RenderOptions,
   ): Promise<Buffer | string> {
-    const width = options.width ?? DEFAULTS.width;
-    const height = options.height ?? DEFAULTS.height;
+    // Auto-fit mode: no explicit dims → render inside a generous viewport,
+    // then measure `#poster-root > :first-child` to get the true canvas.
+    // The author declares their own size via `w-[Wpx] h-[Hpx]` (or any
+    // explicitly-sized root); the CLI captures that exact box.
+    //
+    // Forced mode: if --width/--height is given, that wins and we fall
+    // back to the legacy viewport screenshot (still useful for posters
+    // that genuinely stretch to fill a declared viewport).
+    const autoFit = options.width === undefined && options.height === undefined;
     const deviceScaleFactor =
       options.deviceScaleFactor ?? DEFAULTS.deviceScaleFactor;
+
+    const viewport = autoFit
+      ? DEFAULTS.autoFitViewport
+      : {
+          width: options.width ?? DEFAULTS.width,
+          height: options.height ?? DEFAULTS.height,
+        };
+
     const executablePath = await this.requireBrowser();
 
     const tmpDir = mkdtempSync(join(tmpdir(), "poster-render-"));
@@ -147,26 +168,37 @@ export class Poster {
     const browser = await puppeteer.launch({
       executablePath,
       headless: true,
-      // Default hinting: crisper text at DSF=2. (The OG path below opts for
-      // hinting=none at DSF=1 for smaller, more consistent JPEGs.)
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
     try {
       const page = await browser.newPage();
-      await page.setViewport({ width, height, deviceScaleFactor });
+      await page.setViewport({ ...viewport, deviceScaleFactor });
       await page.goto(pathToFileURL(tmpHtml).href, {
         waitUntil: options.waitUntil ?? DEFAULTS.waitUntil,
       });
       const waitMs = options.waitFor ?? DEFAULTS.waitFor;
       if (waitMs > 0) await new Promise((r) => setTimeout(r, waitMs));
 
+      // Measure the author's root element if we're auto-fitting.
+      const canvas = autoFit
+        ? ((await page.evaluate(() => {
+            const el = document.querySelector(
+              "#poster-root > *",
+            ) as HTMLElement | null;
+            if (!el) return null;
+            const r = el.getBoundingClientRect();
+            if (r.width <= 0 || r.height <= 0) return null;
+            return { width: Math.round(r.width), height: Math.round(r.height) };
+          })) ?? { width: DEFAULTS.width, height: DEFAULTS.height })
+        : viewport;
+
       if (options.format === "pdf") {
-        // No scale override: Puppeteer's scale doubles content against a
-        // fixed paper size, which clips posters. Text/SVG stay vector.
+        // Puppeteer's `scale` doubles content against a fixed paper size,
+        // which clips posters. Text/SVG stay vector without it.
         return Buffer.from(
           await page.pdf({
-            width: `${width}px`,
-            height: `${height}px`,
+            width: `${canvas.width}px`,
+            height: `${canvas.height}px`,
             printBackground: true,
             pageRanges: "1",
           }),
@@ -186,11 +218,30 @@ export class Poster {
       }
 
       const type = options.format === "jpg" ? "jpeg" : options.format;
+
+      // In auto-fit mode, screenshot the measured element directly —
+      // pixel-exact, no clip math, no stray body background bleeding in.
+      if (autoFit) {
+        const el = await page.$("#poster-root > *");
+        if (el) {
+          return Buffer.from(
+            await el.screenshot({
+              type: type as "png" | "jpeg" | "webp",
+              omitBackground: options.format === "png",
+              ...(options.format === "jpg" || options.format === "webp"
+                ? { quality: 100 }
+                : {}),
+            }),
+          );
+        }
+        // No sized root found — fall through to viewport clip.
+      }
+
       return Buffer.from(
         await page.screenshot({
           type: type as "png" | "jpeg" | "webp",
           omitBackground: options.format === "png",
-          clip: { x: 0, y: 0, width, height },
+          clip: { x: 0, y: 0, width: canvas.width, height: canvas.height },
           ...(options.format === "jpg" || options.format === "webp"
             ? { quality: 100 }
             : {}),

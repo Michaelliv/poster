@@ -36,7 +36,7 @@ export default function Wrapped() {
   const maxPlays = topArtists[0].plays;
   return (
     <div
-      className="relative min-h-screen overflow-hidden px-10 py-12 text-white"
+      className="relative w-[1080px] overflow-hidden px-10 py-12 text-white"
       style={{
         background:
           "radial-gradient(ellipse at top, #7c3aed 0%, #ec4899 40%, #f97316 75%, #fbbf24 100%)",
@@ -54,10 +54,10 @@ export default function Wrapped() {
 
       {/* tiny header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.3em]">
+        <div className="flex items-center gap-2 text-[15px] font-bold uppercase tracking-[0.3em]">
           <SparklesIcon className="h-4 w-4" /> Your 2025, Wrapped
         </div>
-        <div className="rounded-full bg-black/20 px-3 py-1 text-[11px] font-medium backdrop-blur">
+        <div className="rounded-full bg-black/20 px-3 py-1 text-[14px] font-medium backdrop-blur">
           @you
         </div>
       </div>
@@ -81,7 +81,7 @@ export default function Wrapped() {
 
       {/* top artists */}
       <div className="mt-10">
-        <div className="mb-3 flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.25em] text-white/90">
+        <div className="mb-3 flex items-center gap-2 text-[15px] font-bold uppercase tracking-[0.25em] text-white/90">
           <MusicIcon className="h-3.5 w-3.5" /> Top artists
         </div>
         <div className="space-y-2">
@@ -93,7 +93,7 @@ export default function Wrapped() {
               <div className="flex-1">
                 <div className="mb-1 flex items-center justify-between">
                   <span className="text-lg font-bold">{a.name}</span>
-                  <span className="text-[12px] font-semibold tabular-nums text-white/70">
+                  <span className="text-[15px] font-semibold tabular-nums text-white/70">
                     {a.plays.toLocaleString()} plays
                   </span>
                 </div>
@@ -115,7 +115,7 @@ export default function Wrapped() {
 
       {/* monthly rhythm */}
       <div className="mt-10">
-        <div className="mb-2 flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.25em] text-white/90">
+        <div className="mb-2 flex items-center gap-2 text-[15px] font-bold uppercase tracking-[0.25em] text-white/90">
           <HeadphonesIcon className="h-3.5 w-3.5" /> Monthly rhythm
         </div>
         <div className="h-[120px]">
@@ -130,7 +130,7 @@ export default function Wrapped() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="mt-1 flex justify-between text-[10px] font-semibold uppercase tracking-wider text-white/70">
+        <div className="mt-1 flex justify-between text-[14px] font-semibold uppercase tracking-wider text-white/70">
           {months.map((m) => (
             <span key={m.m}>{m.m}</span>
           ))}
@@ -146,7 +146,7 @@ export default function Wrapped() {
           <PlayIcon className="h-7 w-7 fill-white text-white" />
         </div>
         <div className="flex-1">
-          <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/70">
+          <div className="text-[14px] font-bold uppercase tracking-[0.2em] text-white/70">
             Most-played song
           </div>
           <div className="text-xl font-bold">Delilah (pull me out of this)</div>
@@ -154,7 +154,7 @@ export default function Wrapped() {
         </div>
       </div>
 
-      <div className="mt-10 text-center text-[11px] font-semibold uppercase tracking-[0.35em] text-white/60">
+      <div className="mt-10 text-center text-[14px] font-semibold uppercase tracking-[0.35em] text-white/60">
         #wrapped2025
       </div>
     </div>

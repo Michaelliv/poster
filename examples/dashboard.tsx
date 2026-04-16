@@ -75,7 +75,7 @@ function KPI({
     <div className="bg-white rounded-xl border border-neutral-200/80 p-5 shadow-sm">
       <div className="flex items-start justify-between">
         <div>
-          <div className="text-[11px] font-medium text-neutral-500 uppercase tracking-wider">{label}</div>
+          <div className="text-[14px] font-medium text-neutral-500 uppercase tracking-wider">{label}</div>
           <div className="text-[26px] font-semibold tracking-tight text-neutral-900 mt-1.5">{value}</div>
         </div>
         <div
@@ -87,14 +87,14 @@ function KPI({
       </div>
       <div className="flex items-center gap-1.5 mt-3">
         <div
-          className={`flex items-center gap-0.5 text-xs font-medium ${
+          className={`flex items-center gap-0.5 text-sm font-medium ${
             positive ? "text-emerald-600" : "text-rose-600"
           }`}
         >
           {positive ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
           {delta}
         </div>
-        <div className="text-xs text-neutral-400">vs last week</div>
+        <div className="text-sm text-neutral-400">vs last week</div>
       </div>
     </div>
   );
@@ -103,22 +103,22 @@ function KPI({
 // ---------- dashboard ----------
 export default function Dashboard() {
   return (
-    <div className="min-h-screen w-full bg-neutral-50 text-neutral-900 p-8 flex flex-col gap-4">
+    <div className="w-[1600px] bg-neutral-50 text-neutral-900 p-8 flex flex-col gap-4">
       {/* Header */}
       <header className="flex items-end justify-between">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-emerald-400 shrink-0" />
           <div>
-            <div className="text-xs text-neutral-500">Prism · Monday, 16 April 2026</div>
+            <div className="text-sm text-neutral-500">Prism · Monday, 16 April 2026</div>
             <h1 className="text-2xl font-semibold tracking-tight leading-tight">Good morning</h1>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <div className="text-xs bg-white border border-neutral-200 rounded-lg px-3 py-1.5 flex items-center gap-2">
+          <div className="text-sm bg-white border border-neutral-200 rounded-lg px-3 py-1.5 flex items-center gap-2">
             <Circle size={7} className="fill-emerald-500 text-emerald-500" />
             All systems healthy
           </div>
-          <div className="text-xs bg-neutral-900 text-white rounded-lg px-3 py-1.5 font-medium">Last 7 days</div>
+          <div className="text-sm bg-neutral-900 text-white rounded-lg px-3 py-1.5 font-medium">Last 7 days</div>
         </div>
       </header>
 
@@ -136,9 +136,9 @@ export default function Dashboard() {
           <div className="flex items-start justify-between mb-4">
             <div>
               <div className="text-sm font-medium text-neutral-900">Revenue</div>
-              <div className="text-xs text-neutral-500 mt-0.5">Daily gross revenue, last 7 days</div>
+              <div className="text-sm text-neutral-500 mt-0.5">Daily gross revenue, last 7 days</div>
             </div>
-            <div className="flex items-center gap-4 text-xs">
+            <div className="flex items-center gap-4 text-sm">
               <div className="flex items-center gap-1.5">
                 <div className="w-2.5 h-2.5 rounded-sm bg-indigo-500" />
                 <span className="text-neutral-700">This week</span>
@@ -158,8 +158,8 @@ export default function Dashboard() {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-              <XAxis dataKey="d" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
-              <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} />
+              <XAxis dataKey="d" stroke="#94a3b8" fontSize={13} tickLine={false} axisLine={false} />
+              <YAxis stroke="#94a3b8" fontSize={13} tickLine={false} axisLine={false} />
               <Area type="monotone" dataKey="prev" stroke="#cbd5e1" strokeWidth={2} strokeDasharray="4 4" fill="transparent" dot={false} />
               <Area type="monotone" dataKey="v" stroke="#6366f1" strokeWidth={2.5} fill="url(#g1)" dot={false} />
             </AreaChart>
@@ -170,26 +170,26 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <div className="text-sm font-medium">Recent activity</div>
-              <div className="text-xs text-neutral-500 mt-0.5">Last 2 hours</div>
+              <div className="text-sm text-neutral-500 mt-0.5">Last 2 hours</div>
             </div>
             <ArrowUpRight size={14} className="text-neutral-400" />
           </div>
           <div className="space-y-3">
             {activity.map((a, i) => (
               <div key={i} className="flex items-center gap-3">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-neutral-200 to-neutral-300 flex items-center justify-center text-[10px] font-semibold text-neutral-600 shrink-0">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-neutral-200 to-neutral-300 flex items-center justify-center text-[14px] font-semibold text-neutral-600 shrink-0">
                   {a.name.split(" ").map((p) => p[0]).join("")}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs text-neutral-900 truncate">
+                  <div className="text-sm text-neutral-900 truncate">
                     <span className="font-medium">{a.name}</span>{" "}
                     <span className="text-neutral-500">{a.action}</span>
                   </div>
-                  <div className="text-[11px] text-neutral-400">{a.time} ago</div>
+                  <div className="text-[14px] text-neutral-400">{a.time} ago</div>
                 </div>
                 {a.amount && (
                   <div
-                    className={`text-xs font-medium ${
+                    className={`text-sm font-medium ${
                       a.amount.startsWith("+") ? "text-emerald-600" : "text-rose-600"
                     }`}
                   >
@@ -208,12 +208,12 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <div className="text-sm font-medium">Channels</div>
-              <div className="text-xs text-neutral-500 mt-0.5">Traffic source breakdown</div>
+              <div className="text-sm text-neutral-500 mt-0.5">Traffic source breakdown</div>
             </div>
           </div>
           <BarChart width={520} height={140} data={channels} layout="vertical">
             <XAxis type="number" hide />
-            <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={11} tickLine={false} axisLine={false} width={70} />
+            <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={13} tickLine={false} axisLine={false} width={70} />
             <Bar dataKey="v" fill="#6366f1" radius={[4, 4, 4, 4]} />
           </BarChart>
         </div>
@@ -222,7 +222,7 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <div className="text-sm font-medium">Plan mix</div>
-              <div className="text-xs text-neutral-500 mt-0.5">Share of active subscriptions</div>
+              <div className="text-sm text-neutral-500 mt-0.5">Share of active subscriptions</div>
             </div>
           </div>
           <div className="flex items-center gap-6">
@@ -235,7 +235,7 @@ export default function Dashboard() {
             </PieChart>
             <div className="flex-1 space-y-2">
               {segments.map((s) => (
-                <div key={s.name} className="flex items-center justify-between text-xs">
+                <div key={s.name} className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full" style={{ background: s.color }} />
                     <span className="text-neutral-700">{s.name}</span>

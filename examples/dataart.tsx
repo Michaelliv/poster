@@ -2,14 +2,14 @@ export default function DataArt() {
   const n = 64;
   const rings = 5;
   return (
-    <div className="min-h-screen p-12 text-white" style={{ background: "#0a0a0a", fontFamily: "'Inter', system-ui" }}>
+    <div className="w-[1200px] p-12 text-white" style={{ background: "#0a0a0a", fontFamily: "'Inter', system-ui" }}>
       <div className="flex items-start justify-between">
         <div>
-          <div className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/40">Generative · 2026-04-16</div>
+          <div className="text-[14px] font-semibold uppercase tracking-[0.3em] text-white/40">Generative · 2026-04-16</div>
           <h1 className="mt-2 text-5xl font-black tracking-tight">Orbits.</h1>
           <p className="mt-1 text-sm text-white/50 max-w-md">Eight months of market volatility, mapped radially.<br/>Each dot = one trading day. Distance = |Δ|, angle = date.</p>
         </div>
-        <div className="flex items-center gap-6 text-[11px] font-mono text-white/40">
+        <div className="flex items-center gap-6 text-[14px] font-mono text-white/40">
           <span>n = {n * rings}</span>
           <span>seed 0x7A3F</span>
           <span>v1.4.0</span>
@@ -55,7 +55,7 @@ export default function DataArt() {
         </svg>
       </div>
 
-      <div className="mt-2 grid grid-cols-4 gap-4 border-t border-white/5 pt-4 text-[11px]">
+      <div className="mt-2 grid grid-cols-4 gap-4 border-t border-white/5 pt-4 text-[14px]">
         {[
           ["Mean Δ", "+0.42%", "#34d399"],
           ["σ daily", "1.18%", "#22d3ee"],

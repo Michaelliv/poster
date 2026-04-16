@@ -1,6 +1,6 @@
 export default function Memphis() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#f5f1e8] p-10" style={{ fontFamily: "'Inter', system-ui" }}>
+    <div className="relative w-[1200px] overflow-hidden bg-[#f5f1e8] p-10" style={{ fontFamily: "'Inter', system-ui" }}>
       {/* floating shapes */}
       <div className="absolute top-10 left-[8%] h-24 w-24 rounded-full bg-[#fb7185]" />
       <div className="absolute top-[16%] right-[10%] h-32 w-32 bg-[#22d3ee]" style={{ transform: "rotate(18deg)" }} />
@@ -27,9 +27,9 @@ export default function Memphis() {
       ))}
 
       {/* content */}
-      <div className="relative z-10 flex min-h-screen flex-col justify-center">
+      <div className="relative z-10 flex min-h-[1500px] flex-col justify-center">
         <div className="max-w-3xl rounded-[28px] border-4 border-[#0f172a] bg-white p-10 shadow-[12px_12px_0_0_#0f172a]">
-          <div className="text-[12px] font-black uppercase tracking-[0.3em] text-[#fb7185]">Hello · 1991 · Energy</div>
+          <div className="text-[15px] font-black uppercase tracking-[0.3em] text-[#fb7185]">Hello · 1991 · Energy</div>
           <h1 className="mt-4 text-[96px] font-black leading-[0.88] tracking-tight text-[#0f172a]">
             Make<br/>
             <span className="text-[#6d28d9]">weird</span><br/>
@@ -38,7 +38,7 @@ export default function Memphis() {
           <p className="mt-6 max-w-lg text-lg text-[#0f172a]/70">A poster is a good excuse to put shapes on a page for no reason. The reason is joy. That is the reason.</p>
           <div className="mt-8 flex items-center gap-4">
             <div className="rounded-full bg-[#0f172a] px-6 py-3 text-sm font-bold uppercase tracking-wider text-[#fef3c7]">RSVP ↗</div>
-            <div className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0f172a]/60">Sept 14 · 7pm · The Studio</div>
+            <div className="text-[14px] font-bold uppercase tracking-[0.25em] text-[#0f172a]/60">Sept 14 · 7pm · The Studio</div>
           </div>
         </div>
       </div>

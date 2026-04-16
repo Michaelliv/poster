@@ -2,7 +2,7 @@ export default function Neon() {
   const scan = Array.from({ length: 14 }, (_, i) => i);
   return (
     <div
-      className="relative min-h-screen overflow-hidden"
+      className="relative w-[1600px] overflow-hidden"
       style={{
         background:
           "radial-gradient(1000px 600px at 50% 110%, rgba(236,72,153,0.35), transparent 60%), radial-gradient(800px 500px at 10% 10%, rgba(34,211,238,0.2), transparent 60%), #05010f",
@@ -29,13 +29,13 @@ export default function Neon() {
       {scan.map((i) => (
         <div key={i} className="absolute left-1/2 -translate-x-1/2 bg-black" style={{ top: `${23 + i * 1.25}%`, width: 320, height: 6 + i * 0.3, opacity: 0.92 }} />
       ))}
-      <div className="relative z-10 flex min-h-screen flex-col items-center justify-between py-12 text-white">
-        <div className="text-[11px] font-bold uppercase tracking-[0.5em]" style={{ color: "#f0abfc" }}>Side A · 198X</div>
+      <div className="relative z-10 flex min-h-[900px] flex-col items-center justify-between py-12 text-white">
+        <div className="text-[14px] font-bold uppercase tracking-[0.5em]" style={{ color: "#f0abfc" }}>Side A · 198X</div>
         <div className="text-center">
           <h1 className="text-[180px] font-black tracking-tighter leading-[0.82]" style={{ background: "linear-gradient(180deg,#fef3c7 0%, #f472b6 55%, #a855f7 100%)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", textShadow: "0 0 40px rgba(236,72,153,0.5)" }}>NEON DREAMS</h1>
           <div className="mt-2 text-xl font-semibold tracking-[0.4em] text-fuchsia-300">▸ MIDNIGHT DRIVE ◂</div>
         </div>
-        <div className="flex w-full justify-between px-8 text-[11px] font-mono text-fuchsia-300/70">
+        <div className="flex w-full justify-between px-8 text-[14px] font-mono text-fuchsia-300/70">
           <span>LAT 34.05°N</span><span>BPM 124</span><span>LONG 118.24°W</span>
         </div>
       </div>

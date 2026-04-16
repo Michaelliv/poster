@@ -27,8 +27,14 @@ program
   .option("-o, --out <path>", "Output .html path", "poster.html")
   .option("-t, --title <title>", "Poster title", "Poster")
   .option("-d, --description <text>", "Meta description", "")
-  .option("-w, --width <px>", "Canvas width", "1440")
-  .option("-h, --height <px>", "Canvas height", "900")
+  .option(
+    "-w, --width <px>",
+    "Force canvas width (default: auto — measured from poster root)",
+  )
+  .option(
+    "-h, --height <px>",
+    "Force canvas height (default: auto — measured from poster root)",
+  )
   .option(
     "--install-browser",
     "Download chrome-headless-shell if no system browser is found",
@@ -47,8 +53,8 @@ program
         out: opts.out,
         title: opts.title,
         description: opts.description,
-        width: Number(opts.width),
-        height: Number(opts.height),
+        width: opts.width !== undefined ? Number(opts.width) : undefined,
+        height: opts.height !== undefined ? Number(opts.height) : undefined,
         installBrowser: opts.installBrowser,
         browser: opts.browser,
         save: opts.save,
@@ -69,8 +75,14 @@ program
     "poster.png",
   )
   .option("-f, --format <fmt>", "Force format: png | svg | pdf | jpg | webp")
-  .option("-w, --width <px>", "Canvas width", "1440")
-  .option("-h, --height <px>", "Canvas height", "900")
+  .option(
+    "-w, --width <px>",
+    "Force canvas width (default: auto — measured from poster root)",
+  )
+  .option(
+    "-h, --height <px>",
+    "Force canvas height (default: auto — measured from poster root)",
+  )
   .option("--scale <n>", "Device scale factor (retina = 2)", "2")
   .option(
     "--install-browser",
@@ -98,8 +110,8 @@ program
         entry,
         out: opts.out,
         format: opts.format as ExportFormat | undefined,
-        width: Number(opts.width),
-        height: Number(opts.height),
+        width: opts.width !== undefined ? Number(opts.width) : undefined,
+        height: opts.height !== undefined ? Number(opts.height) : undefined,
         deviceScaleFactor: Number(opts.scale),
         installBrowser: opts.installBrowser,
         browser: opts.browser,

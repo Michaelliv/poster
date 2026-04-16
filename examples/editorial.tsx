@@ -42,15 +42,15 @@ const sectors = [
 export default function Editorial() {
   return (
     <div
-      className="min-h-screen bg-[#fafaf7] px-16 py-14 text-neutral-900"
+      className="w-[1400px] bg-[#fafaf7] px-16 py-14 text-neutral-900"
       style={{ fontFamily: '"Source Serif 4", "Georgia", serif' }}
     >
       {/* masthead */}
       <div className="mb-10 flex items-end justify-between border-b-2 border-black pb-4">
-        <div className="text-[12px] font-semibold uppercase tracking-[0.35em]">
+        <div className="text-[15px] font-semibold uppercase tracking-[0.35em]">
           The Almanac · Vol. XII · Climate
         </div>
-        <div className="text-[12px] uppercase tracking-wider text-neutral-500">
+        <div className="text-[15px] uppercase tracking-wider text-neutral-500">
           Issue 04 — Spring 2026
         </div>
       </div>
@@ -69,7 +69,7 @@ export default function Editorial() {
           </p>
         </div>
         <div className="col-span-4 flex flex-col justify-end">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.25em] text-neutral-500">
+          <div className="text-[14px] font-semibold uppercase tracking-[0.25em] text-neutral-500">
             By the numbers
           </div>
           <div className="mt-3 space-y-4 border-l-2 border-black pl-4">
@@ -82,7 +82,7 @@ export default function Editorial() {
 
       {/* main chart */}
       <figure className="mt-10">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-500">
+        <div className="text-[14px] font-semibold uppercase tracking-[0.2em] text-neutral-500">
           Fig. 1 — Global temperature anomaly, 1880–2023
         </div>
         <div className="mt-2 h-[340px] border-b-2 border-t border-black">
@@ -96,13 +96,13 @@ export default function Editorial() {
               </defs>
               <XAxis
                 dataKey="y"
-                tick={{ fill: "#525252", fontSize: 11, fontFamily: "Georgia" }}
+                tick={{ fill: "#525252", fontSize: 13, fontFamily: "Georgia" }}
                 tickLine={false}
                 axisLine={false}
                 interval={23}
               />
               <YAxis
-                tick={{ fill: "#525252", fontSize: 11, fontFamily: "Georgia" }}
+                tick={{ fill: "#525252", fontSize: 13, fontFamily: "Georgia" }}
                 tickLine={false}
                 axisLine={false}
                 width={40}
@@ -118,7 +118,7 @@ export default function Editorial() {
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        <figcaption className="mt-2 text-[11px] italic text-neutral-500">
+        <figcaption className="mt-2 text-[14px] italic text-neutral-500">
           Source: NASA GISS surface-temperature analysis.
         </figcaption>
       </figure>
@@ -126,7 +126,7 @@ export default function Editorial() {
       {/* two-column section */}
       <div className="mt-14 grid grid-cols-12 gap-10">
         <div className="col-span-7">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-500">
+          <div className="text-[14px] font-semibold uppercase tracking-[0.2em] text-neutral-500">
             Fig. 2 — Share of global emissions, 2023
           </div>
           <h2 className="mt-2 font-serif text-3xl font-semibold">
@@ -142,7 +142,7 @@ export default function Editorial() {
                 />
               ))}
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 text-[13px]">
+            <div className="mt-3 grid grid-cols-2 gap-x-6 gap-y-1 text-[16px]">
               {emitters.map((e) => (
                 <div key={e.country} className="flex items-center gap-2 border-b border-neutral-200 py-1">
                   <span
@@ -158,7 +158,7 @@ export default function Editorial() {
         </div>
 
         <div className="col-span-5">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-neutral-500">
+          <div className="text-[14px] font-semibold uppercase tracking-[0.2em] text-neutral-500">
             Fig. 3 — Emissions by sector
           </div>
           <h2 className="mt-2 font-serif text-3xl font-semibold">
@@ -197,13 +197,13 @@ export default function Editorial() {
           "The science is unambiguous. What remains is whether we intend to act
           at the scale the problem demands — not whether we are able to."
         </p>
-        <footer className="mt-3 text-[12px] uppercase tracking-[0.25em] text-neutral-500">
+        <footer className="mt-3 text-[15px] uppercase tracking-[0.25em] text-neutral-500">
           — IPCC AR6 Synthesis, paraphrased
         </footer>
       </blockquote>
 
       {/* footer */}
-      <div className="mt-12 flex items-center justify-between border-t-2 border-black pt-4 text-[11px] uppercase tracking-[0.25em] text-neutral-500">
+      <div className="mt-12 flex items-center justify-between border-t-2 border-black pt-4 text-[14px] uppercase tracking-[0.25em] text-neutral-500">
         <span>the-almanac.org</span>
         <span>Page 14 / 68</span>
       </div>
@@ -215,7 +215,7 @@ function Big({ value, label }: { value: string; label: string }) {
   return (
     <div>
       <div className="font-serif text-3xl font-semibold tabular-nums">{value}</div>
-      <div className="text-[11px] uppercase tracking-wider text-neutral-500">
+      <div className="text-[14px] uppercase tracking-wider text-neutral-500">
         {label}
       </div>
     </div>

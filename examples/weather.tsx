@@ -39,7 +39,7 @@ const week = [
 export default function Weather() {
   return (
     <div
-      className="min-h-screen p-10"
+      className="w-[1400px] p-10"
       style={{
         background:
           "linear-gradient(160deg, #f0abfc 0%, #818cf8 35%, #22d3ee 75%, #0ea5e9 100%)",
@@ -54,13 +54,13 @@ export default function Weather() {
         {/* header */}
         <div className="flex items-start justify-between">
           <div>
-            <div className="text-[12px] font-semibold uppercase tracking-[0.25em] text-white/70">
+            <div className="text-[15px] font-semibold uppercase tracking-[0.25em] text-white/70">
               Monday · Apr 16
             </div>
             <div className="mt-1 text-3xl font-semibold">Lisbon, Portugal</div>
             <div className="text-sm text-white/70">Estrela · 38.72°N, 9.15°W</div>
           </div>
-          <div className="flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-[12px] font-medium">
+          <div className="flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-[15px] font-medium">
             <SunIcon className="h-4 w-4" /> Sunny · Feels like 22°
           </div>
         </div>
@@ -83,7 +83,7 @@ export default function Weather() {
 
         {/* hourly temperature curve */}
         <div className="mt-8">
-          <div className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60">
+          <div className="mb-2 text-[14px] font-semibold uppercase tracking-[0.2em] text-white/60">
             Next 24 hours
           </div>
           <div className="h-[180px]">
@@ -97,7 +97,7 @@ export default function Weather() {
                 </defs>
                 <XAxis
                   dataKey="h"
-                  tick={{ fill: "rgba(255,255,255,0.7)", fontSize: 11 }}
+                  tick={{ fill: "rgba(255,255,255,0.7)", fontSize: 13 }}
                   tickLine={false}
                   axisLine={false}
                   interval={2}
@@ -116,7 +116,7 @@ export default function Weather() {
                         x={x}
                         y={y - 8}
                         fill="white"
-                        fontSize={11}
+                        fontSize={13}
                         textAnchor="middle"
                       >
                         {value}°
@@ -138,11 +138,11 @@ export default function Weather() {
                 key={d.d}
                 className="rounded-2xl border border-white/15 bg-white/[0.08] px-3 py-3 text-center"
               >
-                <div className="text-[11px] font-semibold uppercase tracking-wider text-white/70">
+                <div className="text-[14px] font-semibold uppercase tracking-wider text-white/70">
                   {d.d}
                 </div>
                 <Icon className="mx-auto my-2 h-7 w-7 text-white" />
-                <div className="text-[11px] text-white/60">
+                <div className="text-[14px] text-white/60">
                   <DropletIcon className="mr-0.5 inline h-3 w-3" />
                   {d.pop}%
                 </div>
@@ -172,7 +172,7 @@ function Stat({
     <div className="flex items-center gap-2">
       <Icon className="h-4 w-4 text-white/70" />
       <div>
-        <div className="text-[10px] uppercase tracking-wider text-white/60">
+        <div className="text-[14px] uppercase tracking-wider text-white/60">
           {label}
         </div>
         <div className="font-medium">{value}</div>

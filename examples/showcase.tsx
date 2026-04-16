@@ -124,9 +124,9 @@ function Kpi({
         >
           <Icon className="h-4 w-4 text-white" />
         </div>
-        <span className="text-[11px] font-medium text-emerald-400">{delta}</span>
+        <span className="text-[14px] font-medium text-emerald-400">{delta}</span>
       </div>
-      <div className="mt-4 text-[11px] uppercase tracking-wider text-white/40">
+      <div className="mt-4 text-[14px] uppercase tracking-wider text-white/40">
         {label}
       </div>
       <div className="mt-1 text-2xl font-semibold text-white tabular-nums">
@@ -148,10 +148,10 @@ function SectionTitle({
   return (
     <div className="mb-3 flex items-center gap-2">
       <Icon className="h-3.5 w-3.5 text-white/60" />
-      <div className="text-[11px] font-semibold uppercase tracking-wider text-white/70">
+      <div className="text-[14px] font-semibold uppercase tracking-wider text-white/70">
         {title}
       </div>
-      <div className="text-[11px] text-white/30">· {hint}</div>
+      <div className="text-[14px] text-white/30">· {hint}</div>
     </div>
   );
 }
@@ -161,7 +161,7 @@ function SectionTitle({
 export default function Showcase() {
   return (
     <div
-      className="min-h-screen px-10 py-8 text-white"
+      className="w-[1600px] px-10 py-8 text-white"
       style={{
         background:
           "radial-gradient(1200px 600px at 85% -10%, rgba(139,92,246,0.18), transparent 60%), radial-gradient(900px 500px at -5% 110%, rgba(34,211,238,0.14), transparent 60%), #0a0a0f",
@@ -201,7 +201,7 @@ export default function Showcase() {
       {/* header */}
       <header className="mb-8 flex items-end justify-between">
         <div>
-          <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.2em] text-white/40">
+          <div className="flex items-center gap-2 text-[14px] font-medium uppercase tracking-[0.2em] text-white/40">
             <SparklesIcon className="h-3 w-3" /> Poster · Showcase
           </div>
           <h1 className="mt-2 text-4xl font-semibold tracking-tight">
@@ -211,7 +211,7 @@ export default function Showcase() {
             A single .tsx file. Rendered headless. Exported to PNG.
           </p>
         </div>
-        <div className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[11px] text-white/60">
+        <div className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[14px] text-white/60">
           Live · generated {new Date().toISOString().slice(0, 10)}
         </div>
       </header>
@@ -263,13 +263,13 @@ export default function Showcase() {
                 <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
                 <XAxis
                   dataKey="w"
-                  tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 10 }}
+                  tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 13 }}
                   tickLine={false}
                   axisLine={false}
                   interval={5}
                 />
                 <YAxis
-                  tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 10 }}
+                  tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 13 }}
                   tickLine={false}
                   axisLine={false}
                   width={40}
@@ -280,7 +280,7 @@ export default function Showcase() {
                     background: "#0f0f17",
                     border: "1px solid rgba(255,255,255,0.08)",
                     borderRadius: 8,
-                    fontSize: 11,
+                    fontSize: 13,
                   }}
                 />
                 <Area
@@ -325,7 +325,7 @@ export default function Showcase() {
               </RadialBarChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-2 grid grid-cols-2 gap-1 text-[11px]">
+          <div className="mt-2 grid grid-cols-2 gap-1 text-[14px]">
             {radial.map((r, i) => (
               <div key={r.name} className="flex items-center gap-2 text-white/60">
                 <span
@@ -349,7 +349,7 @@ export default function Showcase() {
                 <PolarGrid stroke="rgba(255,255,255,0.08)" />
                 <PolarAngleAxis
                   dataKey="metric"
-                  tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }}
+                  tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 13 }}
                 />
                 <Radar dataKey="B" stroke="#a78bfa" fill="#a78bfa" fillOpacity={0.15} />
                 <Radar dataKey="A" stroke="#22d3ee" fill="#22d3ee" fillOpacity={0.35} />
@@ -368,14 +368,14 @@ export default function Showcase() {
                 <XAxis
                   type="number"
                   dataKey="x"
-                  tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 10 }}
+                  tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 13 }}
                   tickLine={false}
                   axisLine={false}
                 />
                 <YAxis
                   type="number"
                   dataKey="y"
-                  tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 10 }}
+                  tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 13 }}
                   tickLine={false}
                   axisLine={false}
                   width={28}
@@ -404,12 +404,12 @@ export default function Showcase() {
                 <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
                 <XAxis
                   dataKey="day"
-                  tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 10 }}
+                  tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 13 }}
                   tickLine={false}
                   axisLine={false}
                 />
                 <YAxis
-                  tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 10 }}
+                  tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 13 }}
                   tickLine={false}
                   axisLine={false}
                   width={28}
@@ -420,7 +420,7 @@ export default function Showcase() {
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-1 flex gap-3 text-[11px] text-white/60">
+          <div className="mt-1 flex gap-3 text-[14px] text-white/60">
             <span className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-cyan-400" /> API
             </span>
@@ -441,7 +441,7 @@ export default function Showcase() {
               <div className="mt-1 text-4xl font-semibold tabular-nums">
                 58<span className="ml-1 text-lg font-normal text-white/40">ms</span>
               </div>
-              <div className="mt-3 flex gap-5 text-[11px] text-white/50">
+              <div className="mt-3 flex gap-5 text-[14px] text-white/50">
                 <span>p50 <span className="text-white/80 tabular-nums">42ms</span></span>
                 <span>p95 <span className="text-white/80 tabular-nums">118ms</span></span>
                 <span>p99 <span className="text-white/80 tabular-nums">204ms</span></span>
@@ -465,7 +465,7 @@ export default function Showcase() {
       </div>
 
       {/* footer */}
-      <footer className="mt-6 flex items-center justify-between text-[11px] text-white/30">
+      <footer className="mt-6 flex items-center justify-between text-[14px] text-white/30">
         <span>poster · tsx → html → png · headless chrome</span>
         <span>nebula.dev/pulse</span>
       </footer>

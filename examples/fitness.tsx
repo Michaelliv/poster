@@ -73,10 +73,10 @@ function Ring({ ring, size = 200 }: { ring: (typeof rings)[number]; size?: numbe
           </div>
         </div>
       </div>
-      <div className="mt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60">
+      <div className="mt-3 text-[14px] font-semibold uppercase tracking-[0.2em] text-white/60">
         {ring.label}
       </div>
-      <div className="text-[12px] tabular-nums text-white/80">
+      <div className="text-[15px] tabular-nums text-white/80">
         {ring.value} / {ring.goal} {ring.unit}
       </div>
     </div>
@@ -136,7 +136,7 @@ function Stat({
         <Icon className="h-5 w-5" />
       </div>
       <div>
-        <div className="text-[10px] uppercase tracking-wider text-white/50">
+        <div className="text-[14px] uppercase tracking-wider text-white/50">
           {label}
         </div>
         <div className="text-xl font-semibold tabular-nums">
@@ -152,7 +152,7 @@ function Stat({
 export default function Fitness() {
   return (
     <div
-      className="min-h-screen px-10 py-8 text-white"
+      className="w-[1400px] px-10 py-8 text-white"
       style={{
         background:
           "radial-gradient(800px 500px at 10% 0%, rgba(251,45,91,0.15), transparent 60%), radial-gradient(700px 400px at 90% 100%, rgba(34,211,238,0.12), transparent 60%), #07080c",
@@ -162,7 +162,7 @@ export default function Fitness() {
       {/* header */}
       <header className="mb-6 flex items-end justify-between">
         <div>
-          <div className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">
+          <div className="text-[14px] font-semibold uppercase tracking-[0.3em] text-white/50">
             Apr 16 · Tuesday
           </div>
           <h1 className="mt-1 text-3xl font-semibold">Good work today.</h1>
@@ -171,7 +171,7 @@ export default function Fitness() {
             longest this year.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px]">
+        <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[14px]">
           <TrophyIcon className="h-3.5 w-3.5 text-amber-400" />
           Personal best · 8.4km @ 4:52/km
         </div>
@@ -180,7 +180,7 @@ export default function Fitness() {
       {/* rings + stats */}
       <div className="grid grid-cols-12 gap-4">
         <Card className="col-span-6">
-          <div className="mb-4 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60">
+          <div className="mb-4 text-[14px] font-semibold uppercase tracking-[0.2em] text-white/60">
             Today's rings
           </div>
           <div className="flex items-start justify-around">
@@ -202,10 +202,10 @@ export default function Fitness() {
         {/* heart rate */}
         <Card className="col-span-8">
           <div className="mb-3 flex items-center justify-between">
-            <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60">
+            <div className="text-[14px] font-semibold uppercase tracking-[0.2em] text-white/60">
               Heart rate · today
             </div>
-            <div className="flex gap-4 text-[11px] text-white/50">
+            <div className="flex gap-4 text-[14px] text-white/50">
               <span>avg <span className="tabular-nums text-white">74 bpm</span></span>
               <span>max <span className="tabular-nums text-white">162 bpm</span></span>
             </div>
@@ -222,14 +222,14 @@ export default function Fitness() {
                 <CartesianGrid stroke="rgba(255,255,255,0.04)" vertical={false} />
                 <XAxis
                   dataKey="i"
-                  tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 10 }}
+                  tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 13 }}
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(v) => `${Math.floor((v / 96) * 24)}:00`}
                   interval={11}
                 />
                 <YAxis
-                  tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 10 }}
+                  tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 13 }}
                   tickLine={false}
                   axisLine={false}
                   width={32}
@@ -249,7 +249,7 @@ export default function Fitness() {
 
         {/* weekly exercise */}
         <Card className="col-span-4">
-          <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60">
+          <div className="mb-3 text-[14px] font-semibold uppercase tracking-[0.2em] text-white/60">
             This week · exercise min
           </div>
           <div className="h-[200px]">
@@ -257,7 +257,7 @@ export default function Fitness() {
               <BarChart data={week} margin={{ top: 8, right: 0, left: -20, bottom: 0 }}>
                 <XAxis
                   dataKey="d"
-                  tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }}
+                  tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 13 }}
                   tickLine={false}
                   axisLine={false}
                 />
@@ -270,7 +270,7 @@ export default function Fitness() {
               </BarChart>
             </ResponsiveContainer>
           </div>
-          <div className="mt-1 flex items-center justify-between text-[11px] text-white/60">
+          <div className="mt-1 flex items-center justify-between text-[14px] text-white/60">
             <span>Goal · 30 min/day</span>
             <span className="text-emerald-400">5 / 7 hit</span>
           </div>

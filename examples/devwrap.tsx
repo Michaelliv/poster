@@ -62,7 +62,7 @@ export default function DevWrap() {
   const total = heat.flat().reduce((a, b) => a + (b > 0 ? b * 2 : 0), 0);
   return (
     <div
-      className="min-h-screen px-10 py-10 text-white"
+      className="w-[1600px] px-10 py-10 text-white"
       style={{
         background:
           "radial-gradient(800px 500px at 90% 0%, rgba(57,211,83,0.12), transparent 60%), #0d1117",
@@ -72,7 +72,7 @@ export default function DevWrap() {
       {/* header */}
       <header className="mb-8 flex items-end justify-between">
         <div>
-          <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.3em] text-white/50">
+          <div className="flex items-center gap-2 text-[14px] uppercase tracking-[0.3em] text-white/50">
             <CodeIcon className="h-3.5 w-3.5" /> GitHub · 2025 in review
           </div>
           <h1 className="mt-2 text-5xl font-bold tracking-tight">
@@ -80,7 +80,7 @@ export default function DevWrap() {
           </h1>
         </div>
         <div className="text-right">
-          <div className="text-[11px] uppercase tracking-wider text-white/50">
+          <div className="text-[14px] uppercase tracking-wider text-white/50">
             Total contributions
           </div>
           <div className="font-sans text-5xl font-bold tabular-nums text-emerald-400">
@@ -103,10 +103,10 @@ export default function DevWrap() {
         style={{ background: "#0d1117" }}
       >
         <div className="mb-4 flex items-center justify-between">
-          <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60">
+          <div className="text-[14px] font-semibold uppercase tracking-[0.2em] text-white/60">
             Activity graph
           </div>
-          <div className="flex items-center gap-2 text-[10px] text-white/50">
+          <div className="flex items-center gap-2 text-[14px] text-white/50">
             Less
             {levelColor.map((c, i) => (
               <span key={i} className="h-3 w-3 rounded-sm" style={{ background: c }} />
@@ -127,7 +127,7 @@ export default function DevWrap() {
             </div>
           ))}
         </div>
-        <div className="mt-2 flex gap-[3px] text-[10px] text-white/40">
+        <div className="mt-2 flex gap-[3px] text-[14px] text-white/40">
           {months.map((m) => (
             <span key={m} style={{ width: `${100 / 12}%` }}>
               {m}
@@ -143,7 +143,7 @@ export default function DevWrap() {
           className="col-span-4 rounded-2xl border border-white/[0.06] p-6"
           style={{ background: "#0d1117" }}
         >
-          <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60">
+          <div className="mb-3 text-[14px] font-semibold uppercase tracking-[0.2em] text-white/60">
             Languages
           </div>
           <div className="flex items-center gap-4">
@@ -165,7 +165,7 @@ export default function DevWrap() {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="flex-1 space-y-1.5 text-[12px]">
+            <div className="flex-1 space-y-1.5 text-[15px]">
               {langs.map((l) => (
                 <div key={l.name} className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full" style={{ background: l.color }} />
@@ -182,7 +182,7 @@ export default function DevWrap() {
           className="col-span-8 rounded-2xl border border-white/[0.06] p-6"
           style={{ background: "#0d1117" }}
         >
-          <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60">
+          <div className="mb-3 text-[14px] font-semibold uppercase tracking-[0.2em] text-white/60">
             Top repositories
           </div>
           <div className="divide-y divide-white/[0.06]">
@@ -194,9 +194,9 @@ export default function DevWrap() {
                     <span className="text-base font-semibold text-sky-400">
                       dev/{r.name}
                     </span>
-                    <span className="text-[11px] text-white/50">· {r.desc}</span>
+                    <span className="text-[14px] text-white/50">· {r.desc}</span>
                   </div>
-                  <div className="mt-0.5 flex items-center gap-3 text-[11px] text-white/50">
+                  <div className="mt-0.5 flex items-center gap-3 text-[14px] text-white/50">
                     <span className="flex items-center gap-1">
                       <span
                         className="h-2 w-2 rounded-full"
@@ -253,7 +253,7 @@ function BigStat({
       style={{ background: "#0d1117" }}
     >
       <div className="flex items-center justify-between">
-        <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/50">
+        <div className="text-[14px] font-semibold uppercase tracking-[0.2em] text-white/50">
           {label}
         </div>
         <Icon className="h-4 w-4" style={{ color: tone }} />
