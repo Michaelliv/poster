@@ -98,6 +98,11 @@ export async function exportCmd(args: ExportArgs, options: OutputOptions): Promi
       if (waitMs > 0) await new Promise((r) => setTimeout(r, waitMs));
 
       if (format === "pdf") {
+        // No `scale` override: Puppeteer's scale doubles content against a
+        // fixed paper size, which clips posters designed for width×height.
+        // Text and SVG (recharts, lucide) are already vector — crisp at any
+        // zoom. Bitmap content would benefit from scale, but posters rarely
+        // have any, and the layout risk outweighs the win.
         const pdf = await page.pdf({
           width: `${width}px`,
           height: `${height}px`,
@@ -111,12 +116,14 @@ export async function exportCmd(args: ExportArgs, options: OutputOptions): Promi
         );
         writeFileSync(outPath, decodeSvgDataUrl(dataUrl));
       } else {
+        // PNG is lossless — quality is ignored. JPEG & WebP run at 100 for the
+        // crispest output; users who want smaller files can re-encode downstream.
         const type = format === "jpg" ? "jpeg" : format;
         const buf = await page.screenshot({
           type: type as "png" | "jpeg" | "webp",
           omitBackground: format === "png",
           clip: { x: 0, y: 0, width, height },
-          ...(format === "jpg" ? { quality: 95 } : {}),
+          ...(format === "jpg" || format === "webp" ? { quality: 100 } : {}),
         });
         writeFileSync(outPath, buf);
       }
