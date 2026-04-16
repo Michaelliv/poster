@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc && bun run scripts/copy-runtime.ts",
     "prepublishOnly": "npm run build",
-    "postinstall": "node dist/scripts/install-browser.js || true",
+    "postinstall": "node dist/install-browser.js || true",
     "dev": "bun run src/main.ts",
     "build:bun": "bun build --compile src/main.ts --outfile poster",
     "build:bun-linux": "bun build --compile --target=bun-linux-x64 src/main.ts --outfile poster-linux-x64",

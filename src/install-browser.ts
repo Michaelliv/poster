@@ -18,7 +18,7 @@ import {
   computeExecutablePath,
   resolveBuildId,
 } from "@puppeteer/browsers";
-import { BROWSER_CACHE_DIR } from "../utils/browser-cache.js";
+import { BROWSER_CACHE_DIR } from "./utils/browser-cache.js";
 
 async function main() {
   if (process.env.POSTER_SKIP_BROWSER_DOWNLOAD) {
