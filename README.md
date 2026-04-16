@@ -302,8 +302,6 @@ All 52 examples below render through the same pipeline. Each row pairs the rende
     <td valign="top"><strong><code>zine</code></strong> · <a href="examples/zine.tsx">source</a> · <a href="examples/zine.txt">prompt</a><br/><br/><sub>Make a punk zine cover - high-contrast black and white photocopy aesthetic, hand-cut newsprint type, scribble annotations, 'ISSUE 03 · SUMMER 2026 · DESTROY/REBUILD'. Feels Xeroxed and angry.</sub></td>
   </tr>
 </table>
-
-<sub>Regenerate this section with <code>bun scripts/build-gallery.ts</code>.</sub>
 <!-- gallery:end -->
 ---
 
