@@ -6,6 +6,40 @@ All notable changes to `poster-ai` are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-04-16
+
+### Added
+
+- **Auto-fit canvas.** The CLI and SDK now support posters declaring their
+  own size via the root element's Tailwind classes (`w-[Npx]`, optionally
+  `h-[Npx]`). When `--width`/`--height` are omitted (or `width`/`height`
+  options are undefined on `Poster.render`), the renderer sets a generous
+  viewport (2400×3600), measures `#poster-root > :first-child`, and
+  element-screenshots that box. Pixel-exact output, no overflow, no empty
+  strips. Passing explicit `width`/`height` keeps the legacy
+  viewport-screenshot behavior.
+- `DEFAULTS.autoFitViewport` (`{ width: 2400, height: 3600 }`) documenting
+  the auto-fit measurement viewport.
+- CLI success line now reports the **actual** rendered pixel dimensions
+  (parsed from the PNG IHDR chunk, divided by DSF) instead of the stale
+  DEFAULTS fallback. Non-PNG formats report `auto` when not forced.
+
+### Changed
+
+- `src/main.ts` — `--width` / `--height` are now optional (default: auto).
+  Help text updated: "Force canvas width (default: auto — measured from
+  poster root)".
+- `src/runtime/shell.html` — removed the `#poster-root { min-height: 100vh }`
+  rule. Posters declare their own canvas on their root element.
+- All 14 example `.tsx` files migrated from `min-h-screen` to explicit
+  `w-[Npx]` (content-driven height). Font-size floor bumped everywhere to
+  14px (Tailwind) and 13px (Recharts axis ticks).
+
+### Added (examples)
+
+- `docs/thread/` — seven rendered thread posters for a Twitter thread
+  announcing the package.
+
 ## [0.3.0] — 2026-04-16
 
 ### Removed
