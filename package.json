@@ -1,7 +1,7 @@
 {
   "name": "poster-cli",
   "version": "0.1.0",
-  "description": "Single-file distributable React posters — live in the browser, exportable as PNG/SVG/PDF via Satori",
+  "description": "Single-file distributable React posters — live in the browser, exportable to PNG/SVG/PDF/JPG/WebP via headless Chrome",
   "type": "module",
   "main": "dist/main.js",
   "bin": {
@@ -30,13 +30,11 @@
   "bugs": {
     "url": "https://github.com/Michaelliv/poster/issues"
   },
-  "keywords": ["react", "satori", "png-export", "single-file", "distributable", "charts", "recharts"],
+  "keywords": ["react", "png-export", "single-file", "distributable", "charts", "recharts", "puppeteer"],
   "license": "MIT",
   "devDependencies": {
     "@biomejs/biome": "^2.3.14",
-    "@types/lodash": "^4.17.24",
     "@types/node": "^22.0.0",
-    "@types/papaparse": "^5.5.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "typescript": "^5.8.0"
@@ -45,14 +43,9 @@
     "@puppeteer/browsers": "^2.13.0",
     "@zumer/snapdom": "^2.8.0",
     "chalk": "^5.6.2",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
     "commander": "^14.0.3",
     "esbuild": "^0.24.0",
-    "lodash": "^4.18.1",
     "lucide-react": "^1.8.0",
-    "papaparse": "^5.5.3",
-    "pdf-lib": "^1.17.1",
     "puppeteer-core": "^24.41.0",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
