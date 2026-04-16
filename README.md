@@ -2,7 +2,7 @@
 
 > Single-file distributable React posters.
 
-One `.tsx` file with a default-exported React component → one `.html` file that opens in any browser, renders live, and exports itself as PNG, SVG, or PDF.
+One `.tsx` file with a default-exported React component → one `.html` file that opens in any browser, renders live, and exports itself as PNG, SVG, JPG, WebP, or PDF.
 
 ## Install
 
@@ -13,15 +13,11 @@ npm install -g poster-cli
 ## Quick start
 
 ```bash
-poster build app.tsx -o app.html
-open app.html
-```
-
-Or iterate with the dev server:
-
-```bash
-poster dev app.tsx
-# → http://localhost:5173
+poster build app.tsx -o app.html            # standalone .html
+poster build app.tsx -o app.html --og       # ...with og:image baked in
+poster dev   app.tsx                        # dev server + file-watch rebuild
+poster export app.tsx -o out.png            # render via headless Chrome
+poster og    app.tsx -o og.png              # 1200×630 PNG for og:image
 ```
 
 ## Authoring a poster
@@ -38,20 +34,36 @@ export default function App() {
       <LineChart width={400} height={200} data={data}>
         <XAxis dataKey="name" />
         <YAxis />
-        <Line dataKey="v" isAnimationActive={false} dot={false} />
+        <Line dataKey="v" />
       </LineChart>
     </div>
   );
 }
 ```
 
-Available imports: `react`, `react-dom`, `recharts`, `lucide-react`, `lodash`, `papaparse`, `d3-scale`, `d3-shape`, `clsx`, `class-variance-authority`. Tailwind classes work via CDN.
+Use anything that works in the browser — Recharts, lucide-react, Tailwind classes (via CDN), shadcn/ui, lodash. No authoring constraints.
 
 ## Export
 
-Every built poster ships with a floating toolbar (bottom-right): **PNG**, **SVG**, **PDF**. Click to download. The render goes through Satori, so the component must use the Satori-compatible subset for pixel-accurate export.
+Every built poster ships with a floating toolbar (bottom-right): **PNG · SVG · WebP · PDF**. Captures via [snapDOM](https://github.com/zumerlab/snapdom) — no browser fidelity loss, no Satori-subset limits.
 
-**For charts:** use Recharts with fixed `width`/`height` and `isAnimationActive={false}`. Avoid `ResponsiveContainer`, `Tooltip`, and `Brush` in the export path.
+For server-side exports (CI, scripts, OG generation), `poster export` and `poster og` use a headless browser via `puppeteer-core`. Resolution order at runtime: system Chrome / Brave / Edge (preferred — warmer, newer), then a bundled `chrome-headless-shell` that was downloaded by the package's postinstall step.
+
+### Browser install
+
+When you `npm install poster-cli` (or `bun install poster-cli`), a postinstall script fetches `chrome-headless-shell` (~80 MB) into `~/.cache/poster-browsers/`. This means `poster export` and `poster og` work out of the box on fresh machines with no Chrome installed.
+
+Opt out with `POSTER_SKIP_BROWSER_DOWNLOAD=1`:
+
+```bash
+POSTER_SKIP_BROWSER_DOWNLOAD=1 npm install -g poster-cli
+```
+
+If the download fails (offline, corporate proxy, etc.), the install still succeeds with a warning. You can retry later with `poster export --install-browser`.
+
+## OG images
+
+`poster build --og` bakes a 1200×630 JPEG into the HTML as an `og:image` data URL. When hosted (any static host) social crawlers pick it up. Platform support for data URLs in `og:image` is uneven in practice: Discord renders them; WhatsApp / Twitter / Facebook currently ignore data URLs and fall back to title + description only. If you need a universal preview image, pair the HTML with a separately-hosted `.png` and update the meta tags to point at it.
 
 ## For agents
 

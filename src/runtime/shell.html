@@ -4,6 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{TITLE}}</title>
+    <meta name="description" content="{{DESCRIPTION}}" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{TITLE}}" />
+    <meta property="og:description" content="{{DESCRIPTION}}" />
+    {{OG_IMAGE_TAGS}}
+
+    <!-- Twitter card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{TITLE}}" />
+    <meta name="twitter:description" content="{{DESCRIPTION}}" />
+    {{TWITTER_IMAGE_TAG}}
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       html, body { margin: 0; padding: 0; background: #fafafa; font-family: Inter, system-ui, sans-serif; }
@@ -31,6 +45,7 @@
       <span class="label">export</span>
       <button data-export="png">PNG</button>
       <button data-export="svg">SVG</button>
+      <button data-export="webp">WebP</button>
       <button data-export="pdf">PDF</button>
     </div>
     <script>window.__POSTER_META__ = {{META_JSON}};</script>

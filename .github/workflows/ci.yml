@@ -14,7 +14,10 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - run: bun install
+      - name: Install deps (skip chrome download in CI)
+        run: bun install
+        env:
+          POSTER_SKIP_BROWSER_DOWNLOAD: "1"
       - name: Typecheck
         run: bunx tsc --noEmit
       - name: Run tests

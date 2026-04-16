@@ -1,8 +1,11 @@
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { pathToFileURL, fileURLToPath } from "node:url";
 import * as esbuild from "esbuild";
-import { EXIT_NOT_FOUND, EXIT_USER_ERROR } from "../utils/exit-codes.js";
+import puppeteer from "puppeteer-core";
+import { NO_BROWSER_HINT, resolveBrowser } from "./_render.js";
+import { EXIT_NOT_FOUND } from "../utils/exit-codes.js";
 import {
   error,
   hint,
@@ -10,13 +13,12 @@ import {
   output,
   type OutputOptions,
   success,
+  warn,
 } from "../utils/output.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// The runtime/ directory is copied next to dist/ by scripts/copy-runtime.ts.
-// In dev we resolve it relative to the source tree.
 function resolveRuntime(): string {
   const candidates = [
     join(__dirname, "..", "runtime"),
@@ -30,14 +32,17 @@ export interface BuildArgs {
   entry: string;
   out: string;
   title?: string;
+  description?: string;
   width?: number;
   height?: number;
+  og?: boolean;
+  ogWidth?: number;
+  ogHeight?: number;
+  installBrowser?: boolean;
+  browser?: string;
 }
 
-export async function build(
-  args: BuildArgs,
-  options: OutputOptions,
-): Promise<void> {
+export async function build(args: BuildArgs, options: OutputOptions): Promise<void> {
   const entry = resolve(process.cwd(), args.entry);
   if (!existsSync(entry)) {
     error(`Entry not found: ${entry}`);
@@ -46,19 +51,84 @@ export async function build(
 
   const runtimeDir = resolveRuntime();
   const shell = readFileSync(join(runtimeDir, "shell.html"), "utf-8");
-  const bootstrap = join(runtimeDir, "bootstrap.tsx");
 
   const title = args.title ?? "Poster";
-  const width = args.width ?? 1200;
-  const height = args.height ?? 800;
+  const description = args.description ?? "";
+  const width = args.width ?? 1440;
+  const height = args.height ?? 900;
+  const ogWidth = args.ogWidth ?? 1200;
+  const ogHeight = args.ogHeight ?? 630;
 
-  // Virtual plugin that rewrites `virtual:poster-entry` → user's TSX.
+  const bundle = await bundleEntry(runtimeDir, entry, options);
+  const outPath = resolve(process.cwd(), args.out);
+
+  // Pass 1 — emit HTML with meta tags but no og:image (placeholder).
+  const pass1 = renderShell(shell, {
+    title,
+    description,
+    bundle,
+    meta: { title, width, height },
+    ogImageDataUrl: null,
+    ogWidth,
+    ogHeight,
+  });
+
+  // Pass 2 — if --og, render the page to a PNG, base64, and rebake.
+  let finalHtml = pass1;
+  let ogBaked = false;
+  if (args.og) {
+    const dataUrl = await renderOgDataUrl(pass1, {
+      width: ogWidth,
+      height: ogHeight,
+      browser: args.browser,
+      installBrowser: args.installBrowser,
+      options,
+    });
+    if (dataUrl) {
+      finalHtml = renderShell(shell, {
+        title,
+        description,
+        bundle,
+        meta: { title, width, height },
+        ogImageDataUrl: dataUrl,
+        ogWidth,
+        ogHeight,
+      });
+      ogBaked = true;
+    }
+  }
+
+  writeFileSync(outPath, finalHtml);
+
+  const sizeKb = (finalHtml.length / 1024).toFixed(1);
+  output(options, {
+    json: () => ({
+      success: true,
+      out: outPath,
+      sizeKb: Number(sizeKb),
+      ogBaked,
+    }),
+    quiet: () => {},
+    human: () => {
+      success(`Built ${outPath}`);
+      info(`${sizeKb} KB${ogBaked ? " · og:image inlined" : ""} — open in any browser`);
+    },
+  });
+}
+
+// ---------- helpers ----------
+
+async function bundleEntry(
+  runtimeDir: string,
+  entry: string,
+  options: OutputOptions,
+): Promise<string> {
+  const bootstrap = join(runtimeDir, "bootstrap.tsx");
+
   const virtualEntry: esbuild.Plugin = {
     name: "poster-virtual-entry",
     setup(b) {
-      b.onResolve({ filter: /^virtual:poster-entry$/ }, () => ({
-        path: entry,
-      }));
+      b.onResolve({ filter: /^virtual:poster-entry$/ }, () => ({ path: entry }));
     },
   };
 
@@ -73,30 +143,104 @@ export async function build(
     plugins: [virtualEntry],
     logLevel: options.quiet ? "silent" : "warning",
     define: { "process.env.NODE_ENV": '"production"' },
-  });
-
-  const bundle = result.outputFiles[0].text;
-
-  const html = shell
-    .replaceAll("{{TITLE}}", escapeHtml(title))
-    .replaceAll(
-      "{{META_JSON}}",
-      JSON.stringify({ title, width, height }).replace(/</g, "\\u003c"),
-    )
-    .replace("{{BUNDLE_JS}}", () => bundle);
-
-  const outPath = resolve(process.cwd(), args.out);
-  writeFileSync(outPath, html);
-
-  const sizeKb = (html.length / 1024).toFixed(1);
-
-  output(options, {
-    json: () => ({ success: true, out: outPath, sizeKb: Number(sizeKb) }),
-    human: () => {
-      success(`Built ${outPath}`);
-      info(`${sizeKb} KB — open in any browser`);
+    banner: {
+      js: "var process=(typeof process!=='undefined')?process:{env:{NODE_ENV:'production'},platform:'browser',browser:true,version:'',versions:{node:''}};var global=(typeof global!=='undefined')?global:globalThis;",
     },
   });
+  return result.outputFiles[0].text;
+}
+
+interface ShellRenderArgs {
+  title: string;
+  description: string;
+  bundle: string;
+  meta: { title: string; width: number; height: number };
+  ogImageDataUrl: string | null;
+  ogWidth: number;
+  ogHeight: number;
+}
+
+function renderShell(shell: string, a: ShellRenderArgs): string {
+  const ogImageTags = a.ogImageDataUrl
+    ? [
+        `<meta property="og:image" content="${a.ogImageDataUrl}" />`,
+        `<meta property="og:image:type" content="image/jpeg" />`,
+        `<meta property="og:image:width" content="${a.ogWidth}" />`,
+        `<meta property="og:image:height" content="${a.ogHeight}" />`,
+      ].join("\n    ")
+    : "";
+  const twitterImageTag = a.ogImageDataUrl
+    ? `<meta name="twitter:image" content="${a.ogImageDataUrl}" />`
+    : "";
+
+  return shell
+    .replaceAll("{{TITLE}}", escapeHtml(a.title))
+    .replaceAll("{{DESCRIPTION}}", escapeHtml(a.description))
+    .replace("{{OG_IMAGE_TAGS}}", ogImageTags)
+    .replace("{{TWITTER_IMAGE_TAG}}", twitterImageTag)
+    .replaceAll(
+      "{{META_JSON}}",
+      JSON.stringify(a.meta).replace(/</g, "\\u003c"),
+    )
+    .replace("{{BUNDLE_JS}}", () =>
+      a.bundle.replace(/<\/script>/gi, "<\\/script>"),
+    );
+}
+
+/**
+ * Render the given HTML to a JPEG data URL at the OG canonical size.
+ * Returns null (with a warning) if no browser is available.
+ */
+async function renderOgDataUrl(
+  html: string,
+  opts: {
+    width: number;
+    height: number;
+    browser?: string;
+    installBrowser?: boolean;
+    options: OutputOptions;
+  },
+): Promise<string | null> {
+  const executablePath = await resolveBrowser(
+    { browser: opts.browser, allowInstall: opts.installBrowser },
+    opts.options,
+  );
+  if (!executablePath) {
+    warn("Skipping og:image — no system browser found.");
+    hint(NO_BROWSER_HINT);
+    return null;
+  }
+
+  const tmpDir = mkdtempSync(join(tmpdir(), "poster-og-"));
+  const tmpHtml = join(tmpDir, "og.html");
+  writeFileSync(tmpHtml, html);
+
+  const browser = await puppeteer.launch({
+    executablePath,
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox", "--font-render-hinting=none"],
+  });
+  try {
+    const page = await browser.newPage();
+    // DSF=1 — OG crawlers cache at canonical size; 2x just bloats the data URL.
+    await page.setViewport({ width: opts.width, height: opts.height, deviceScaleFactor: 1 });
+    await page.goto(pathToFileURL(tmpHtml).href, { waitUntil: "networkidle0" });
+    // Let chart animations settle before snapshotting the OG image.
+    await new Promise((r) => setTimeout(r, 1500));
+    await page.addStyleTag({ content: "#poster-toolbar{display:none !important;}" });
+
+    // JPEG @ 82 quality strikes a good balance — keeps data URL ~80–150 KB
+    // which stays within the meta-tag size budgets of major crawlers.
+    const buf = await page.screenshot({
+      type: "jpeg",
+      quality: 82,
+      clip: { x: 0, y: 0, width: opts.width, height: opts.height },
+    });
+    return `data:image/jpeg;base64,${Buffer.from(buf).toString("base64")}`;
+  } finally {
+    await browser.close();
+    rmSync(tmpDir, { recursive: true, force: true });
+  }
 }
 
 function escapeHtml(s: string): string {

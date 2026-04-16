@@ -29,7 +29,9 @@ export async function dev(args: DevArgs, options: OutputOptions): Promise<void> 
           width: args.width,
           height: args.height,
         },
-        { ...options, quiet: true },
+        // Internal build — unconditionally quiet so a `--json` caller's
+        // flag doesn't leak JSON into every rebuild.
+        { quiet: true },
       );
       info(`rebuilt ${new Date().toLocaleTimeString()}`);
     } catch (err) {

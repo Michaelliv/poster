@@ -4,25 +4,28 @@ import { output, success, type OutputOptions } from "../utils/output.js";
 
 const INSTRUCTIONS = `
 <poster>
-Use \`poster\` to produce single-file distributable React pages. One \`.tsx\` file with a default-exported component compiles to one \`.html\` file that opens in any browser, renders live, and can export itself as PNG / SVG / PDF via a toolbar (powered by Satori + resvg).
+Use \`poster\` to produce single-file distributable React pages. One \`.tsx\` file with a default-exported component compiles to one \`.html\` file that opens in any browser, renders live, and can export itself as PNG / SVG / JPG / WebP / PDF via a floating toolbar (powered by snapDOM + jsPDF).
 
 <commands>
-- \`poster build app.tsx -o app.html\` — build a standalone HTML
-- \`poster dev app.tsx\` — local dev server with file-watch rebuild
-- \`poster build app.tsx -o out.html --width 1600 --height 900\` — set export canvas size
+- \`poster build app.tsx -o app.html\` — build a standalone HTML.
+- \`poster build app.tsx -o app.html --og\` — also bake an og:image data URL for Discord and social previews.
+- \`poster build app.tsx -o app.html --width 1600 --height 900\` — set canvas size.
+- \`poster dev app.tsx\` — local dev server with file-watch rebuild.
+- \`poster export app.tsx -o out.png\` — server-side render via headless Chrome (PNG / SVG / JPG / WebP / PDF).
+- \`poster og app.tsx -o og.png\` — preset: 1200×630 PNG for og:image metadata.
 </commands>
 
 <authoring>
 - The file must default-export a React component.
-- Available imports: \`react\`, \`react-dom\`, \`recharts\`, \`lucide-react\`, \`lodash\`, \`papaparse\`, \`d3-scale\`, \`d3-shape\`, \`clsx\`, \`class-variance-authority\`.
-- Tailwind is available via CDN — classNames just work.
-- For charts, use Recharts with **fixed width/height** (not \`ResponsiveContainer\`) and pass \`isAnimationActive={false}\` so the Satori export path renders correctly. Avoid \`Tooltip\` / \`Brush\` for export-safe output.
-- No network calls, no browser APIs that rely on user gestures — Satori is a one-shot render pass.
+- Use anything that works in the browser — Recharts, lucide-react, Tailwind (via CDN), shadcn/ui. No Satori-subset restrictions.
+- Canvas is fixed at build time; content that exceeds the canvas gets clipped in exports. Design to fit the specified \`--width\` / \`--height\`.
+- For chart-heavy pages, exports wait 1500 ms after load so animations settle. Override with \`--wait-for <ms>\` if you use longer animations.
+- \`poster export\` and \`poster og\` prefer the system Chrome/Brave/Edge; otherwise they use a \`chrome-headless-shell\` downloaded at \`npm install\` time (opt out with \`POSTER_SKIP_BROWSER_DOWNLOAD=1\`).
 </authoring>
 
 <rules>
 - ALWAYS use \`--json\` flag for machine-readable output.
-- The output \`.html\` is self-contained — no external requests required except the Tailwind CDN (will be inlined in a later version).
+- The output \`.html\` is self-contained apart from one dependency: the Tailwind CDN script (used for class-based styling). Offline rendering works for everything already-painted; only the initial Tailwind stylesheet needs network.
 </rules>
 </poster>
 `.trim();

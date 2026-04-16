@@ -31,8 +31,8 @@ export function output(
 ): void {
   if (options.json && handlers.json) {
     jsonOutput(handlers.json());
-  } else if (options.quiet && handlers.quiet) {
-    handlers.quiet();
+  } else if (options.quiet) {
+    handlers.quiet?.();
   } else {
     handlers.human();
   }

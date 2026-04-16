@@ -1,18 +1,16 @@
-// Export pipeline: React element → Satori → SVG → (resvg → PNG) or (jsPDF → PDF)
+// Client-side export pipeline — runs inside the built poster HTML.
 //
-// Loaded lazily from bootstrap.tsx on first export click.
+// snapDOM captures the #poster-root subtree to SVG/PNG/WebP/JPG. For PDF we
+// rasterize to PNG and wrap via jsPDF. The whole thing is lazy-loaded from
+// bootstrap.tsx on first export click so it stays out of initial parse.
 
-import satori from "satori";
-import { Resvg, initWasm } from "@resvg/resvg-wasm";
-// @ts-expect-error wasm import
-import resvgWasm from "@resvg/resvg-wasm/index_bg.wasm";
+import { snapdom } from "@zumer/snapdom";
 import { jsPDF } from "jspdf";
 
-export type Format = "png" | "svg" | "pdf";
+export type Format = "png" | "svg" | "pdf" | "jpg" | "webp";
 
 export interface ExportOptions {
   format: Format;
-  element: any;
   meta: {
     title: string;
     width: number;
@@ -20,79 +18,65 @@ export interface ExportOptions {
   };
 }
 
-let resvgReady: Promise<void> | null = null;
-function ensureResvg() {
-  resvgReady ??= initWasm(resvgWasm as any);
-  return resvgReady;
+/**
+ * Capture the poster root and return a data URL. Used by the server-side
+ * `poster export` when it wants SVG output (page.screenshot can't do SVG).
+ * Exposed on window as __posterCapture by bootstrap.tsx.
+ */
+export async function captureDataUrl(format: Exclude<Format, "pdf">): Promise<string> {
+  const target = document.getElementById("poster-root");
+  if (!target) throw new Error("poster: #poster-root not found");
+  const cap = await snapdom(target, { scale: 2, embedFonts: true });
+  if (format === "svg") return cap.url;
+  if (format === "png") return (await cap.toPng()).src;
+  if (format === "jpg") return (await cap.toJpg()).src;
+  if (format === "webp") return (await cap.toWebp()).src;
+  throw new Error(`captureDataUrl: unsupported format ${format}`);
 }
 
-// Fonts are base64-inlined at build time and attached to window.__POSTER_FONTS__
-function getFonts() {
-  const fonts = (window as any).__POSTER_FONTS__ as Array<{
-    name: string;
-    data: string; // base64
-    weight: number;
-    style: "normal" | "italic";
-  }> | undefined;
-  if (!fonts) return [];
-  return fonts.map((f) => ({
-    name: f.name,
-    data: Uint8Array.from(atob(f.data), (c) => c.charCodeAt(0)).buffer,
-    weight: f.weight as 400 | 700,
-    style: f.style,
-  }));
-}
+export async function exportPoster({ format, meta }: ExportOptions) {
+  const target = document.getElementById("poster-root");
+  if (!target) throw new Error("poster: #poster-root not found");
 
-export async function exportPoster({ format, element, meta }: ExportOptions) {
-  const svg = await satori(element, {
-    width: meta.width,
-    height: meta.height,
-    fonts: getFonts() as any,
-  });
+  // Single capture, reused for multiple export paths. `scale: 2` is retina;
+  // style compression is internal in snapDOM v2.
+  const capture = await snapdom(target, { scale: 2, embedFonts: true });
+
+  const filename = slugify(meta.title) || "poster";
 
   if (format === "svg") {
-    download(new Blob([svg], { type: "image/svg+xml" }), `${meta.title}.svg`);
+    await capture.download({ type: "svg", filename });
     return;
   }
-
   if (format === "png") {
-    await ensureResvg();
-    const resvg = new Resvg(svg);
-    const png = resvg.render().asPng();
-    download(new Blob([png], { type: "image/png" }), `${meta.title}.png`);
+    await capture.download({ type: "png", filename });
     return;
   }
-
+  if (format === "jpg") {
+    await capture.download({ type: "jpg", filename, backgroundColor: "#ffffff" });
+    return;
+  }
+  if (format === "webp") {
+    await capture.download({ type: "webp", filename });
+    return;
+  }
   if (format === "pdf") {
-    await ensureResvg();
-    const resvg = new Resvg(svg);
-    const png = resvg.render().asPng();
-    const dataUrl = await blobToDataUrl(new Blob([png], { type: "image/png" }));
+    const canvas = await capture.toCanvas();
+    const dataUrl = canvas.toDataURL("image/png");
     const pdf = new jsPDF({
       orientation: meta.width >= meta.height ? "landscape" : "portrait",
       unit: "px",
       format: [meta.width, meta.height],
     });
     pdf.addImage(dataUrl, "PNG", 0, 0, meta.width, meta.height);
-    pdf.save(`${meta.title}.pdf`);
+    pdf.save(`${filename}.pdf`);
     return;
   }
 }
 
-function download(blob: Blob, filename: string) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function blobToDataUrl(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(r.result as string);
-    r.onerror = reject;
-    r.readAsDataURL(blob);
-  });
+function slugify(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
