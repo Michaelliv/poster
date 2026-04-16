@@ -1,8 +1,9 @@
-// Shared Chromium-driving helpers — used by both `export` and by the
-// optional OG-baking step in `build`.
+// Chromium executable resolver — used by the SDK (poster.ts) and, via it,
+// by the CLI commands. Lives at src/ root because it's shared infra, not
+// command code.
 //
 // resolveBrowser() picks, in order:
-//   1. explicit --browser path
+//   1. explicit browser path
 //   2. system Chrome / Brave / Edge / Chromium
 //   3. previously-installed chrome-headless-shell from @puppeteer/browsers
 //   4. auto-install chrome-headless-shell (~80 MB) if allowInstall is true
@@ -16,8 +17,8 @@ import {
   computeExecutablePath,
   resolveBuildId,
 } from "@puppeteer/browsers";
-import { BROWSER_CACHE_DIR } from "../utils/browser-cache.js";
-import { info, type OutputOptions } from "../utils/output.js";
+import { BROWSER_CACHE_DIR } from "./utils/browser-cache.js";
+import { info, type OutputOptions } from "./utils/output.js";
 
 const CANDIDATE_PATHS = {
   darwin: [

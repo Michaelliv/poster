@@ -13,7 +13,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import * as esbuild from "esbuild";
 import puppeteer from "puppeteer-core";
-import { resolveBrowser } from "./commands/_render.js";
+import { resolveBrowser } from "./browser.js";
 
 // ---------- public types ----------
 
@@ -51,6 +51,19 @@ export interface RenderOptions extends BuildOptions {
   /** Extra ms to wait after navigation. Default 1500 (lets Recharts settle). */
   waitFor?: number;
 }
+
+// ---------- defaults ----------
+
+/** Canvas defaults applied when a build/render option is left unset. */
+export const DEFAULTS = {
+  width: 1440,
+  height: 900,
+  ogWidth: 1200,
+  ogHeight: 630,
+  deviceScaleFactor: 2,
+  waitUntil: "networkidle0" as const,
+  waitFor: 1500,
+} as const;
 
 // ---------- class ----------
 
@@ -100,32 +113,45 @@ export class Poster {
 
     const title = options.title ?? "Poster";
     const description = options.description ?? "";
-    const width = options.width ?? 1440;
-    const height = options.height ?? 900;
-    const ogDims = typeof options.og === "object" ? options.og : {};
-    const ogWidth = ogDims.width ?? 1200;
-    const ogHeight = ogDims.height ?? 630;
+    const width = options.width ?? DEFAULTS.width;
+    const height = options.height ?? DEFAULTS.height;
 
     const bundle = await bundleEntry(runtimeDir, entry);
+    const meta = { title, width, height };
 
-    const html = renderShell(shell, {
+    if (!options.og) {
+      return renderShell(shell, {
+        title,
+        description,
+        bundle,
+        meta,
+        ogImageDataUrl: null,
+        ogWidth: DEFAULTS.ogWidth,
+        ogHeight: DEFAULTS.ogHeight,
+      });
+    }
+
+    const ogDims = typeof options.og === "object" ? options.og : {};
+    const ogWidth = ogDims.width ?? DEFAULTS.ogWidth;
+    const ogHeight = ogDims.height ?? DEFAULTS.ogHeight;
+
+    // Pass 1: render without og:image, just so the crawler-facing DOM exists.
+    const pass1 = renderShell(shell, {
       title,
       description,
       bundle,
-      meta: { title, width, height },
+      meta,
       ogImageDataUrl: null,
       ogWidth,
       ogHeight,
     });
-
-    if (!options.og) return html;
-
-    const dataUrl = await this.renderOgDataUrl(html, ogWidth, ogHeight);
+    // Pass 2: screenshot pass 1, bake the data URL back in.
+    const dataUrl = await this.renderOgDataUrl(pass1, ogWidth, ogHeight);
     return renderShell(shell, {
       title,
       description,
       bundle,
-      meta: { title, width, height },
+      meta,
       ogImageDataUrl: dataUrl,
       ogWidth,
       ogHeight,
@@ -136,9 +162,9 @@ export class Poster {
     html: string,
     options: RenderOptions,
   ): Promise<Buffer | string> {
-    const width = options.width ?? 1440;
-    const height = options.height ?? 900;
-    const deviceScaleFactor = options.deviceScaleFactor ?? 2;
+    const width = options.width ?? DEFAULTS.width;
+    const height = options.height ?? DEFAULTS.height;
+    const deviceScaleFactor = options.deviceScaleFactor ?? DEFAULTS.deviceScaleFactor;
     const executablePath = await this.requireBrowser();
 
     const tmpDir = mkdtempSync(join(tmpdir(), "poster-render-"));
@@ -156,9 +182,9 @@ export class Poster {
       const page = await browser.newPage();
       await page.setViewport({ width, height, deviceScaleFactor });
       await page.goto(pathToFileURL(tmpHtml).href, {
-        waitUntil: options.waitUntil ?? "networkidle0",
+        waitUntil: options.waitUntil ?? DEFAULTS.waitUntil,
       });
-      const waitMs = options.waitFor ?? 1500;
+      const waitMs = options.waitFor ?? DEFAULTS.waitFor;
       if (waitMs > 0) await new Promise((r) => setTimeout(r, waitMs));
 
       if (options.format === "pdf") {

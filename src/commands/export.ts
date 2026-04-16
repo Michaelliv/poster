@@ -1,10 +1,10 @@
 // CLI `export` — thin wrapper around Poster.render. Handles stdin entry
 // persistence, file writing, and human/JSON/quiet output.
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { type ExportFormat, inferFormat, Poster } from "../poster.js";
-import { EXIT_NOT_FOUND, EXIT_USER_ERROR } from "../utils/exit-codes.js";
+import { DEFAULTS, type ExportFormat, inferFormat, Poster } from "../poster.js";
+import { EXIT_ERROR, EXIT_USER_ERROR } from "../utils/exit-codes.js";
 import {
   error,
   info,
@@ -67,15 +67,18 @@ export async function exportCmd(
     );
 
     const outPath = resolve(process.cwd(), args.out);
+    const bytes =
+      typeof result === "string"
+        ? Buffer.byteLength(result, "utf-8")
+        : result.length;
     if (typeof result === "string") {
       writeFileSync(outPath, result, "utf-8");
     } else {
       writeFileSync(outPath, result);
     }
 
-    const bytes = readFileSync(outPath).length;
-    const width = args.width ?? 1440;
-    const height = args.height ?? 900;
+    const width = args.width ?? DEFAULTS.width;
+    const height = args.height ?? DEFAULTS.height;
     output(options, {
       json: () => ({ success: true, out: outPath, format, bytes, width, height }),
       human: () => {
@@ -85,7 +88,7 @@ export async function exportCmd(
     });
   } catch (err) {
     error((err as Error).message);
-    process.exit(EXIT_NOT_FOUND);
+    process.exit(EXIT_ERROR);
   } finally {
     entry.cleanup();
   }

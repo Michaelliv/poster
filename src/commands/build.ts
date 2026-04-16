@@ -5,7 +5,7 @@
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { Poster } from "../poster.js";
-import { EXIT_NOT_FOUND } from "../utils/exit-codes.js";
+import { EXIT_ERROR } from "../utils/exit-codes.js";
 import {
   error,
   info,
@@ -79,7 +79,7 @@ export async function build(args: BuildArgs, options: OutputOptions): Promise<vo
     });
   } catch (err) {
     error((err as Error).message);
-    process.exit(EXIT_NOT_FOUND);
+    process.exit(EXIT_ERROR);
   } finally {
     entry.cleanup();
   }

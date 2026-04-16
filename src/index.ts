@@ -4,7 +4,7 @@
 // const poster = new Poster();
 // const png = await poster.render({ tsx: source }, { format: "png" });
 
-export { Poster, inferFormat } from "./poster.js";
+export { DEFAULTS, inferFormat, Poster } from "./poster.js";
 export type {
   BuildOptions,
   ExportFormat,
