@@ -34,7 +34,7 @@ Every command supports `--width`, `--height`, `--json`, and `--quiet`.
 Pass `-` as the entry and pipe TSX on stdin:
 
 ```bash
-cat <<'EOF' | poster export - -o hero.png --width 1200 --height 600
+poster export - -o hero.png --width 1200 --height 600 <<'EOF'
 export default function() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
