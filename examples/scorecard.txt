@@ -1,0 +1,1 @@
+Make a baseball scorecard for a fictional game: Brooklyn Larks vs. Chicago Drays · 9 Apr 2026 · Sunset Field. Inning-by-inning grid with R/H/E columns, batting lineup with positions (1B/2B/SS/etc), pitcher line stats. Newsprint sports-page aesthetic.

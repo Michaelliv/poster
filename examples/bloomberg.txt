@@ -1,0 +1,1 @@
+Make a market dashboard that LOOKS LIKE Bloomberg Terminal — black background, monospaced amber-on-black, dense rows of tickers. Show 8 tickers with bid/ask/last/chg/vol.

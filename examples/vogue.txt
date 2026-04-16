@@ -1,0 +1,1 @@
+Make a Vogue-style magazine cover (1200px wide) — abstract radial gradient suggesting a portrait (deep umber centre fading to peach), serif masthead at top, single italic pull quote ('I only photograph what I can't explain.'), edition info, cover-line teasers down one side. Source Serif 4 throughout.

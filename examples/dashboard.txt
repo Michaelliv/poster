@@ -1,0 +1,1 @@
+Make a single-page analytics dashboard poster — 1600px wide, Recharts area + bar charts, top-customer table (Ava Chen, Sora Okafor, Jin Park, Elena Rossi, Kai Nakamura), traffic source breakdown (Organic / Referral / etc), KPI tiles. Dark theme with gradient fills, precise tabular numbers.

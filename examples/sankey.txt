@@ -1,0 +1,1 @@
+Make a Sankey diagram poster showing where a tech startup's annual revenue ($12M) flows: 5 revenue streams in → 8 cost categories out → net result. Real budget-like proportions, gradient ribbons, currency labels.

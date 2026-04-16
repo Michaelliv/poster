@@ -23,13 +23,10 @@ bun.lock
 .env.local
 .env.*.local
 
-# Example output
+# Generated HTML bundles (rebuild from TSX) — keep PNGs in the gallery
 examples/*.html
 !examples/README.md
 
 # OS
 .DS_Store
-examples/*.png
-examples/*.pdf
-examples/*.html
 .poster/

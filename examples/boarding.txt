@@ -1,0 +1,1 @@
+Make an airline boarding pass for SFO → NRT, passenger Ava Chen, flight UA837, seat 14A, gate F19, boarding 22:45. Use perforated divider, monospace ticket type, barcode placeholder, airline color band.

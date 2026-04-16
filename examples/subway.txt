@@ -1,0 +1,1 @@
+Make a Tokyo subway-map style schematic showing 6 colored transit lines with named stations and interchange points — geometric, 45° / 90° angles only, line legend, route numbers in colored circles. A poster-style rendition, not a real map.

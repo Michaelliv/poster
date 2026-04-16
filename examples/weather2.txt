@@ -1,0 +1,1 @@
+Make a weather forecast card for New York: today's conditions, 5-day forecast, hourly temperature line chart.

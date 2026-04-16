@@ -1,0 +1,1 @@
+Make a newspaper front page broadsheet from 'The Meridian Tribune' dated 14 April 2026. Masthead, lead story headline + 3 columns of dummy text, secondary stories in sidebar, weather strip, edition info.

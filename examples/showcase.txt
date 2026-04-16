@@ -1,0 +1,1 @@
+Make a multi-chart product analytics showcase poster (1600×1000) — five Recharts visualizations (Engagement / Retention / Activation / Referrals / Quality) on one canvas, KPI band at the top (active users, regions live), dark theme with rich gradient fills. Dense without feeling cramped.

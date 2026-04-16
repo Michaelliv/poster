@@ -1,0 +1,1 @@
+Make a pricing table poster for a SaaS called Prism with 3 tiers: Free ($0), Pro ($29/mo), Team ($99/mo). Include 5 feature rows per tier with checkmarks.

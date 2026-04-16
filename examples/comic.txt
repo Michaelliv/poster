@@ -1,0 +1,1 @@
+Make a 4-panel comic strip explaining race conditions in concurrent code. Each panel should have a caption and a different stylized scene.

@@ -1,0 +1,1 @@
+Make a Pokémon-style trading card for a fictional creature 'Magmoth' (Fire/Ground type) — HP, attacks with damage, evolution stage, foil-effect placeholder, illustrator credit, set symbol.

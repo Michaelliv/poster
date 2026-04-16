@@ -1,0 +1,1 @@
+Make a NYT-style crossword puzzle poster — 15x15 black/white grid with numbered white squares and black blockers, 'Across' and 'Down' clue lists in two columns below. Title 'Saturday, 18 April 2026 · by Alex Vogel'. The grid and clues should be real-looking (not solvable, just visually correct).

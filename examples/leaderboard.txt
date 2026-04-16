@@ -1,0 +1,1 @@
+Make a leaderboard poster showing top 10 open-source projects ranked by stars this week. Include rank, name, stars, language, delta.

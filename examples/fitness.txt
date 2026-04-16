@@ -1,0 +1,1 @@
+Make a fitness dashboard poster (1400×900) styled like Apple Fitness — concentric activity rings (move / exercise / stand), workout history strip, KPI tiles (Active energy / Exercise minutes / Resting HR / Workouts), clean dark/light cards, Inter type.

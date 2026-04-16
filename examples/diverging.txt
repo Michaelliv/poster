@@ -1,0 +1,1 @@
+Make an analyst chart showing 12 startups' YoY revenue change as a horizontal bar chart — 5 of them are negative (down to -68%), 7 are positive (up to +312%). Need to handle the zero-line properly.

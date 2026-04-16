@@ -1,0 +1,1 @@
+Make a developer year-in-review poster (1600×1000) — GitHub-style contribution heatmap, language mix donut chart (TypeScript heavy), top repositories list, KPI tiles for commits / PRs / reviews / longest streak. Dark theme, monospace accents, code-tool aesthetic.

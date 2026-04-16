@@ -1,0 +1,1 @@
+Make a release-notes poster for 'Lumen 4.0' — software changelog formatted as a magazine cover. Big version number, date, 6 feature highlights with icons, breaking-changes warning band, contributor count, 'view full changelog' CTA. Developer-tool aesthetic.

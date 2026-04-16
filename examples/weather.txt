@@ -1,0 +1,1 @@
+Make a weather hero card (1400×900) — painted gradient sky background (peach to dusty blue), large frosted-glass card overlaid with current temperature, condition, hourly trend area chart, humidity and wind tiles. Soft, atmospheric, calming.
