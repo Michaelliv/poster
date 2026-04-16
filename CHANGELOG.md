@@ -6,6 +6,8 @@ All notable changes to `poster-ai` are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-04-16
+
 ### Removed
 
 - `poster build --og` and the two-pass `og:image` data-URL baking. Basic
