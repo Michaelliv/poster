@@ -50,7 +50,7 @@ const langs = [
 const repos = [
   { name: "poster", desc: "tsx → html → png", stars: 1_842, commits: 284, lang: "TypeScript" },
   { name: "stage", desc: "agent runtime on Convex", stars: 962, commits: 411, lang: "TypeScript" },
-  { name: "napkin", desc: "obsidian from the CLI", stars: 624, commits: 138, lang: "Rust" },
+  { name: "napkin", desc: "notes from the CLI", stars: 624, commits: 138, lang: "Rust" },
   { name: "pi", desc: "personal CLI zoo", stars: 388, commits: 602, lang: "TypeScript" },
 ];
 
@@ -76,7 +76,7 @@ export default function DevWrap() {
             <CodeIcon className="h-3.5 w-3.5" /> GitHub · 2025 in review
           </div>
           <h1 className="mt-2 text-5xl font-bold tracking-tight">
-            @michael <span className="text-white/30">shipped</span>
+            @dev <span className="text-white/30">shipped</span>
           </h1>
         </div>
         <div className="text-right">
@@ -192,7 +192,7 @@ export default function DevWrap() {
                 <div className="flex-1">
                   <div className="flex items-baseline gap-2">
                     <span className="text-base font-semibold text-sky-400">
-                      michael/{r.name}
+                      dev/{r.name}
                     </span>
                     <span className="text-[11px] text-white/50">· {r.desc}</span>
                   </div>

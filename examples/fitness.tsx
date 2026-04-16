@@ -165,7 +165,7 @@ export default function Fitness() {
           <div className="text-[11px] font-semibold uppercase tracking-[0.3em] text-white/50">
             Apr 16 · Tuesday
           </div>
-          <h1 className="mt-1 text-3xl font-semibold">Good work, Michael.</h1>
+          <h1 className="mt-1 text-3xl font-semibold">Good work today.</h1>
           <p className="text-sm text-white/60">
             You're on a <span className="text-emerald-400">12-day streak</span> —
             longest this year.

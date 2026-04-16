@@ -110,7 +110,7 @@ export default function Dashboard() {
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-emerald-400 shrink-0" />
           <div>
             <div className="text-xs text-neutral-500">Prism · Monday, 16 April 2026</div>
-            <h1 className="text-2xl font-semibold tracking-tight leading-tight">Good morning, Michael</h1>
+            <h1 className="text-2xl font-semibold tracking-tight leading-tight">Good morning</h1>
           </div>
         </div>
         <div className="flex items-center gap-2">

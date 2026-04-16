@@ -58,7 +58,7 @@ export default function Wrapped() {
           <SparklesIcon className="h-4 w-4" /> Your 2025, Wrapped
         </div>
         <div className="rounded-full bg-black/20 px-3 py-1 text-[11px] font-medium backdrop-blur">
-          @michael
+          @you
         </div>
       </div>
 
