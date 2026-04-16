@@ -7,9 +7,8 @@
 > **One `.tsx` file, every format you'll ever need.**
 
 Write a React component. Get a self-contained `.html` file, a PNG, a PDF, an
-SVG, a JPG, or a WebP - at any canvas size. No browser fidelity loss, no
-Satori-subset restrictions, no design-tool lock-in. Works as a **CLI** for
-humans and as a **library** for agents and services.
+SVG, a JPG, or a WebP at any canvas size. Works as a **CLI** for humans and
+as a **library** for agents and services.
 
 ```bash
 npm install -g poster-ai        # CLI (installs the `poster` binary)
@@ -339,17 +338,17 @@ export default function App() {
 [lucide-react](https://lucide.dev), Inter + Source Serif 4 + JetBrains Mono
 (loaded via Google Fonts so exports are consistent across machines).
 
-**No authoring restrictions** - this isn't Satori. Anything that renders in
-Chrome renders here: hooks, context, `useState`, animations, SVG, CSS
-gradients, `backdrop-filter`, fonts, the lot.
+**No authoring restrictions.** Anything that renders in Chrome renders
+here: hooks, context, `useState`, animations, SVG, CSS gradients,
+`backdrop-filter`, fonts, the lot.
 
 ---
 
 ## Export pipeline
 
 Exports screenshot the rendered DOM through a headless browser
-(`puppeteer-core`). No Satori-subset fidelity loss - what you see in Chrome
-is what lands in the PNG, pixel-for-pixel, at DSF 2 for retina.
+(`puppeteer-core`). What you see in Chrome is what lands in the PNG,
+pixel-for-pixel, at DSF 2 for retina.
 
 **Browser resolution:**
 
