@@ -3,7 +3,7 @@
 import { createRequire } from "node:module";
 import { Command } from "commander";
 import { build } from "./commands/build.js";
-import { exportCmd, type ExportFormat } from "./commands/export.js";
+import { type ExportFormat, exportCmd } from "./commands/export.js";
 
 const require = createRequire(import.meta.url);
 const { version } = require("../package.json");
@@ -12,22 +12,32 @@ const program = new Command();
 
 program
   .name("poster")
-  .description("Single-file distributable React posters — build + export (PNG/SVG/PDF/JPG/WebP)")
+  .description(
+    "Single-file distributable React posters — build + export (PNG/SVG/PDF/JPG/WebP)",
+  )
   .version(`poster ${version}`, "-v, --version")
   .option("--json", "Output as JSON")
   .option("-q, --quiet", "Suppress output");
 
 program
   .command("build <entry>")
-  .description("Build a standalone .html from a .tsx entry file ('-' reads TSX from stdin)")
+  .description(
+    "Build a standalone .html from a .tsx entry file ('-' reads TSX from stdin)",
+  )
   .option("-o, --out <path>", "Output .html path", "poster.html")
   .option("-t, --title <title>", "Poster title", "Poster")
   .option("-d, --description <text>", "Meta description", "")
   .option("-w, --width <px>", "Canvas width", "1440")
   .option("-h, --height <px>", "Canvas height", "900")
-  .option("--install-browser", "Download chrome-headless-shell if no system browser is found")
+  .option(
+    "--install-browser",
+    "Download chrome-headless-shell if no system browser is found",
+  )
   .option("--browser <path>", "Explicit Chrome/Chromium executable")
-  .option("--save <path>", "Where to persist stdin TSX (default: .poster/<out>.tsx)")
+  .option(
+    "--save <path>",
+    "Where to persist stdin TSX (default: .poster/<out>.tsx)",
+  )
   .option("--ephemeral", "Skip persistence — stdin written to a tmp dir only")
   .action(async (entry, opts, cmd) => {
     const root = cmd.optsWithGlobals();
@@ -50,21 +60,36 @@ program
 
 program
   .command("export <entry>")
-  .description("Render a .tsx to .png / .svg / .pdf / .jpg / .webp ('-' reads TSX from stdin)")
-  .option("-o, --out <path>", "Output file (format inferred from extension)", "poster.png")
+  .description(
+    "Render a .tsx to .png / .svg / .pdf / .jpg / .webp ('-' reads TSX from stdin)",
+  )
+  .option(
+    "-o, --out <path>",
+    "Output file (format inferred from extension)",
+    "poster.png",
+  )
   .option("-f, --format <fmt>", "Force format: png | svg | pdf | jpg | webp")
   .option("-w, --width <px>", "Canvas width", "1440")
   .option("-h, --height <px>", "Canvas height", "900")
   .option("--scale <n>", "Device scale factor (retina = 2)", "2")
-  .option("--install-browser", "Download chrome-headless-shell if no system browser is found")
+  .option(
+    "--install-browser",
+    "Download chrome-headless-shell if no system browser is found",
+  )
   .option("--browser <path>", "Explicit path to a Chrome/Chromium executable")
   .option(
     "--wait-until <event>",
     "Navigation wait: load | domcontentloaded | networkidle0 | networkidle2",
     "networkidle0",
   )
-  .option("--wait-for <ms>", "Extra ms to wait after navigation (default 1500 to let animations settle)")
-  .option("--save <path>", "Where to persist stdin TSX (default: .poster/<out>.tsx)")
+  .option(
+    "--wait-for <ms>",
+    "Extra ms to wait after navigation (default 1500 to let animations settle)",
+  )
+  .option(
+    "--save <path>",
+    "Where to persist stdin TSX (default: .poster/<out>.tsx)",
+  )
   .option("--ephemeral", "Skip persistence — stdin written to a tmp dir only")
   .action(async (entry, opts, cmd) => {
     const root = cmd.optsWithGlobals();
@@ -86,7 +111,6 @@ program
       { json: root.json, quiet: root.quiet },
     );
   });
-
 
 program.parseAsync(process.argv).catch((err) => {
   console.error("Fatal error:", err.message);

@@ -13,9 +13,9 @@ import { existsSync } from "node:fs";
 import {
   Browser as BrowserEnum,
   type BrowserPlatform,
+  computeExecutablePath,
   detectBrowserPlatform,
   install,
-  computeExecutablePath,
   resolveBuildId,
 } from "@puppeteer/browsers";
 import { BROWSER_CACHE_DIR } from "./utils/browser-cache.js";
@@ -59,7 +59,9 @@ async function main() {
 
   const platform = detectBrowserPlatform();
   if (!platform) {
-    console.warn("[poster] Could not detect platform; skipping chrome-headless-shell download.");
+    console.warn(
+      "[poster] Could not detect platform; skipping chrome-headless-shell download.",
+    );
     return;
   }
 
@@ -77,11 +79,15 @@ async function main() {
     });
 
     if (existsSync(execPath)) {
-      console.log(`[poster] chrome-headless-shell@${buildId} already installed.`);
+      console.log(
+        `[poster] chrome-headless-shell@${buildId} already installed.`,
+      );
       return;
     }
 
-    console.log(`[poster] Downloading chrome-headless-shell@${buildId} (~80 MB) — one-time, takes ~30s…`);
+    console.log(
+      `[poster] Downloading chrome-headless-shell@${buildId} (~80 MB) — one-time, takes ~30s…`,
+    );
     console.log(`[poster]   cache: ${BROWSER_CACHE_DIR}`);
     console.log(`[poster]   skip next time: POSTER_SKIP_BROWSER_DOWNLOAD=1`);
 
@@ -109,6 +115,8 @@ async function main() {
 
 main().catch((err) => {
   // Final safety net — npm install must not fail over this script.
-  console.warn(`[poster] postinstall error (ignored): ${(err as Error).message}`);
+  console.warn(
+    `[poster] postinstall error (ignored): ${(err as Error).message}`,
+  );
   process.exit(0);
 });

@@ -9,8 +9,8 @@ import { EXIT_ERROR } from "../utils/exit-codes.js";
 import {
   error,
   info,
-  output,
   type OutputOptions,
+  output,
   success,
 } from "../utils/output.js";
 import { defaultSavePath, resolveEntry } from "./_entry.js";
@@ -28,7 +28,10 @@ export interface BuildArgs {
   ephemeral?: boolean;
 }
 
-export async function build(args: BuildArgs, options: OutputOptions): Promise<void> {
+export async function build(
+  args: BuildArgs,
+  options: OutputOptions,
+): Promise<void> {
   const savePath = args.ephemeral
     ? null
     : (args.save ?? defaultSavePath(args.out));

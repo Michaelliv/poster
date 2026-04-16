@@ -9,7 +9,13 @@
 // Callers must invoke `cleanup()` in a finally block. For persisted entries
 // it's a no-op; for ephemeral stdin it removes the tmp directory.
 
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { EXIT_NOT_FOUND, EXIT_USER_ERROR } from "../utils/exit-codes.js";
@@ -42,7 +48,9 @@ export async function resolveEntry(
     const source = await readStdin();
     if (!source.trim()) {
       error("Empty stdin — expected TSX source on stdin when entry is '-'.");
-      hint("Example:  echo 'export default () => <h1>Hi</h1>' | poster export - -o out.png");
+      hint(
+        "Example:  echo 'export default () => <h1>Hi</h1>' | poster export - -o out.png",
+      );
       process.exit(EXIT_USER_ERROR);
     }
 

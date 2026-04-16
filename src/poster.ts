@@ -7,7 +7,13 @@
 // The CLI is a thin wrapper around these. Never calls process.exit, never
 // writes to stdout. Throws on error; callers decide what to do.
 
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -71,7 +77,10 @@ export class Poster {
   }
 
   /** Build a self-contained HTML string from a TSX entry. */
-  async buildHtml(input: PosterInput, options: BuildOptions = {}): Promise<string> {
+  async buildHtml(
+    input: PosterInput,
+    options: BuildOptions = {},
+  ): Promise<string> {
     const entry = resolveInput(input);
     try {
       return await this.buildFromPath(entry.path, options);
@@ -100,7 +109,10 @@ export class Poster {
 
   // ---------- internals ----------
 
-  private async buildFromPath(entry: string, options: BuildOptions): Promise<string> {
+  private async buildFromPath(
+    entry: string,
+    options: BuildOptions,
+  ): Promise<string> {
     const runtimeDir = resolveRuntime();
     const shell = readFileSync(join(runtimeDir, "shell.html"), "utf-8");
 
@@ -124,7 +136,8 @@ export class Poster {
   ): Promise<Buffer | string> {
     const width = options.width ?? DEFAULTS.width;
     const height = options.height ?? DEFAULTS.height;
-    const deviceScaleFactor = options.deviceScaleFactor ?? DEFAULTS.deviceScaleFactor;
+    const deviceScaleFactor =
+      options.deviceScaleFactor ?? DEFAULTS.deviceScaleFactor;
     const executablePath = await this.requireBrowser();
 
     const tmpDir = mkdtempSync(join(tmpdir(), "poster-render-"));
@@ -162,7 +175,12 @@ export class Poster {
 
       if (options.format === "svg") {
         const dataUrl = await page.evaluate(
-          async () => await (window as unknown as { __posterCapture: (f: string) => Promise<string> }).__posterCapture("svg"),
+          async () =>
+            await (
+              window as unknown as {
+                __posterCapture: (f: string) => Promise<string>;
+              }
+            ).__posterCapture("svg"),
         );
         return decodeSvgDataUrl(dataUrl);
       }
@@ -186,7 +204,10 @@ export class Poster {
 
   private async requireBrowser(): Promise<string> {
     const path = await resolveBrowser(
-      { browser: this.options.browser, allowInstall: this.options.installBrowser },
+      {
+        browser: this.options.browser,
+        allowInstall: this.options.installBrowser,
+      },
       { quiet: true },
     );
     if (!path) {
@@ -200,12 +221,18 @@ export class Poster {
 
 // ---------- helpers ----------
 
-function resolveInput(input: PosterInput): { path: string; cleanup: () => void } {
+function resolveInput(input: PosterInput): {
+  path: string;
+  cleanup: () => void;
+} {
   if ("tsx" in input) {
     const dir = mkdtempSync(join(tmpdir(), "poster-sdk-"));
     const path = join(dir, "entry.tsx");
     writeFileSync(path, input.tsx);
-    return { path, cleanup: () => rmSync(dir, { recursive: true, force: true }) };
+    return {
+      path,
+      cleanup: () => rmSync(dir, { recursive: true, force: true }),
+    };
   }
   const abs = resolve(process.cwd(), input.file);
   if (!existsSync(abs)) throw new Error(`Entry not found: ${abs}`);
@@ -242,7 +269,9 @@ async function bundleEntry(runtimeDir: string, entry: string): Promise<string> {
   const virtualEntry: esbuild.Plugin = {
     name: "poster-virtual-entry",
     setup(b) {
-      b.onResolve({ filter: /^virtual:poster-entry$/ }, () => ({ path: entry }));
+      b.onResolve({ filter: /^virtual:poster-entry$/ }, () => ({
+        path: entry,
+      }));
     },
   };
   const posterNodeModules = findPosterNodeModules();

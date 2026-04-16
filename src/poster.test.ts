@@ -5,7 +5,7 @@
 import { describe, expect, test } from "bun:test";
 import { existsSync } from "node:fs";
 import { resolveBrowser } from "./browser.js";
-import { Poster, inferFormat } from "./poster.js";
+import { inferFormat, Poster } from "./poster.js";
 
 const TRIVIAL_TSX = `
   export default function Page() {
@@ -23,11 +23,14 @@ async function haveBrowser(): Promise<boolean> {
 describe("Poster SDK", () => {
   test("buildHtml({ tsx }) returns a self-contained HTML document", async () => {
     const poster = new Poster();
-    const html = await poster.buildHtml({ tsx: TRIVIAL_TSX }, {
-      title: "Smoke",
-      width: 800,
-      height: 600,
-    });
+    const html = await poster.buildHtml(
+      { tsx: TRIVIAL_TSX },
+      {
+        title: "Smoke",
+        width: 800,
+        height: 600,
+      },
+    );
 
     // Has the shell
     expect(html).toContain("<!doctype html>");

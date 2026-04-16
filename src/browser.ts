@@ -12,9 +12,9 @@ import { existsSync } from "node:fs";
 import {
   Browser as BrowserEnum,
   type BrowserPlatform,
+  computeExecutablePath,
   detectBrowserPlatform,
   install,
-  computeExecutablePath,
   resolveBuildId,
 } from "@puppeteer/browsers";
 import { BROWSER_CACHE_DIR } from "./utils/browser-cache.js";
@@ -81,7 +81,8 @@ export async function resolveBrowser(
     if (existsSync(execPath)) return execPath;
 
     if (opts.allowInstall) {
-      if (!options.quiet) info(`Installing chrome-headless-shell @ ${buildId}…`);
+      if (!options.quiet)
+        info(`Installing chrome-headless-shell @ ${buildId}…`);
       const installed = await install({
         browser: BrowserEnum.CHROMEHEADLESSSHELL,
         buildId,

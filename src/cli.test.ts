@@ -28,7 +28,21 @@ describe("CLI", () => {
     const out = join(dir, "out.png");
     try {
       const proc = Bun.spawn({
-        cmd: ["node", CLI, "export", "-", "-o", out, "--width", "400", "--height", "300", "--wait-for", "0", "--ephemeral"],
+        cmd: [
+          "node",
+          CLI,
+          "export",
+          "-",
+          "-o",
+          out,
+          "--width",
+          "400",
+          "--height",
+          "300",
+          "--wait-for",
+          "0",
+          "--ephemeral",
+        ],
         stdin: "pipe",
         stdout: "pipe",
         stderr: "pipe",
