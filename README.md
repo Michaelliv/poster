@@ -401,7 +401,7 @@ For [pi](https://github.com/badlogic/pi-mono) users,
 [**pi-poster**](https://github.com/Michaelliv/pi-poster) registers a
 `poster_render` tool plus a comprehensive `poster` skill so the agent
 knows the layout grammar, color systems, font floor, and signature
-patterns up front. 39 of the 53 examples in `examples/` were generated
+patterns up front. 38 of the 52 examples in `examples/` were generated
 through that loop — each one's prompt is saved as a paired `.txt`
 sidecar (`vinyl.png` + `vinyl.tsx` + `vinyl.txt`) so you can see exactly
 what input produced what output.
