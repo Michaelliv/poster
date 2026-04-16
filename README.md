@@ -233,4 +233,4 @@ were generated via a single stdin call each. Exact workflow an agent will use.
 
 ## License
 
-MIT — see [LICENSE](./LICENSE).
+MIT.
