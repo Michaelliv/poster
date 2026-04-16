@@ -29,3 +29,6 @@ examples/*.html
 
 # OS
 .DS_Store
+examples/*.png
+examples/*.pdf
+examples/*.html
