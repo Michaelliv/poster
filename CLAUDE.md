@@ -54,9 +54,7 @@ Use `poster` to produce single-file distributable React pages. One `.tsx` file w
 - `poster build app.tsx -o app.html` — build a standalone HTML.
 - `poster build app.tsx -o app.html --og` — also bake an og:image data URL for Discord and social previews.
 - `poster build app.tsx -o app.html --width 1600 --height 900` — set canvas size.
-- `poster dev app.tsx` — local dev server with file-watch rebuild.
 - `poster export app.tsx -o out.png` — server-side render via headless Chrome (PNG / SVG / JPG / WebP / PDF).
-- `poster og app.tsx -o og.png` — preset: 1200×630 PNG for og:image metadata.
 </commands>
 
 <authoring>
@@ -64,7 +62,7 @@ Use `poster` to produce single-file distributable React pages. One `.tsx` file w
 - Use anything that works in the browser — Recharts, lucide-react, Tailwind (via CDN), shadcn/ui. No Satori-subset restrictions.
 - Canvas is fixed at build time; content that exceeds the canvas gets clipped in exports. Design to fit the specified `--width` / `--height`.
 - For chart-heavy pages, exports wait 1500 ms after load so animations settle. Override with `--wait-for <ms>` if you use longer animations.
-- `poster export` and `poster og` prefer the system Chrome/Brave/Edge; otherwise they use a `chrome-headless-shell` downloaded at `npm install` time (opt out with `POSTER_SKIP_BROWSER_DOWNLOAD=1`).
+- `poster export` prefers the system Chrome/Brave/Edge; otherwise it uses a `chrome-headless-shell` downloaded at `npm install` time (opt out with `POSTER_SKIP_BROWSER_DOWNLOAD=1`).
 </authoring>
 
 <rules>

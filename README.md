@@ -15,9 +15,7 @@ npm install -g poster-cli
 ```bash
 poster build app.tsx -o app.html            # standalone .html
 poster build app.tsx -o app.html --og       # ...with og:image baked in
-poster dev   app.tsx                        # dev server + file-watch rebuild
 poster export app.tsx -o out.png            # render via headless Chrome
-poster og    app.tsx -o og.png              # 1200×630 PNG for og:image
 ```
 
 ## Authoring a poster
@@ -47,11 +45,11 @@ Use anything that works in the browser — Recharts, lucide-react, Tailwind clas
 
 Every built poster ships with a floating toolbar (bottom-right): **PNG · SVG · WebP · PDF**. Captures via [snapDOM](https://github.com/zumerlab/snapdom) — no browser fidelity loss, no Satori-subset limits.
 
-For server-side exports (CI, scripts, OG generation), `poster export` and `poster og` use a headless browser via `puppeteer-core`. Resolution order at runtime: system Chrome / Brave / Edge (preferred — warmer, newer), then a bundled `chrome-headless-shell` that was downloaded by the package's postinstall step.
+For server-side exports (CI, scripts, OG generation), `poster export` uses a headless browser via `puppeteer-core`. Resolution order at runtime: system Chrome / Brave / Edge (preferred — warmer, newer), then a bundled `chrome-headless-shell` that was downloaded by the package's postinstall step.
 
 ### Browser install
 
-When you `npm install poster-cli` (or `bun install poster-cli`), a postinstall script fetches `chrome-headless-shell` (~80 MB) into `~/.cache/poster-browsers/`. This means `poster export` and `poster og` work out of the box on fresh machines with no Chrome installed.
+When you `npm install poster-cli` (or `bun install poster-cli`), a postinstall script fetches `chrome-headless-shell` (~80 MB) into `~/.cache/poster-browsers/`. This means `poster export` works out of the box on fresh machines with no Chrome installed.
 
 Opt out with `POSTER_SKIP_BROWSER_DOWNLOAD=1`:
 
