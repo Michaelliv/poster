@@ -7,8 +7,8 @@ A default-exported React component compiles to a self-contained `.html` file and
 ## Install
 
 ```bash
-npm install -g poster-cli        # CLI
-npm install poster-cli           # library
+npm install -g poster-ai         # CLI (installs the `poster` binary)
+npm install poster-ai            # library
 ```
 
 ## CLI
@@ -28,7 +28,7 @@ so an agent can iterate on it next run. Pass `--ephemeral` to skip persistence.
 
 ```ts
 import { writeFileSync } from "node:fs";
-import { Poster } from "poster-cli";
+import { Poster } from "poster-ai";
 
 const poster = new Poster();
 
@@ -85,12 +85,12 @@ Exports go through a headless browser via `puppeteer-core` — screenshotting th
 
 ### Browser install
 
-When you `npm install poster-cli` (or `bun install poster-cli`), a postinstall script fetches `chrome-headless-shell` (~80 MB) into `~/.cache/poster-browsers/`. This means `poster export` works out of the box on fresh machines with no Chrome installed.
+When you `npm install poster-ai` (or `bun install poster-ai`), a postinstall script fetches `chrome-headless-shell` (~80 MB) into `~/.cache/poster-browsers/`. This means `poster export` works out of the box on fresh machines with no Chrome installed.
 
 Opt out with `POSTER_SKIP_BROWSER_DOWNLOAD=1`:
 
 ```bash
-POSTER_SKIP_BROWSER_DOWNLOAD=1 npm install -g poster-cli
+POSTER_SKIP_BROWSER_DOWNLOAD=1 npm install -g poster-ai
 ```
 
 If the download fails (offline, corporate proxy, etc.), the install still succeeds with a warning. You can retry later with `poster export --install-browser`.

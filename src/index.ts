@@ -1,6 +1,6 @@
 // Public library surface.
 //
-// import { Poster } from "poster-cli";
+// import { Poster } from "poster-ai";
 // const poster = new Poster();
 // const png = await poster.render({ tsx: source }, { format: "png" });
 
