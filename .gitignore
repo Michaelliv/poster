@@ -32,3 +32,4 @@ examples/*.html
 examples/*.png
 examples/*.pdf
 examples/*.html
+.poster/

@@ -4,10 +4,9 @@ import { dirname, join, resolve } from "node:path";
 import { pathToFileURL, fileURLToPath } from "node:url";
 import * as esbuild from "esbuild";
 import puppeteer from "puppeteer-core";
+import { defaultSavePath, resolveEntry } from "./_entry.js";
 import { NO_BROWSER_HINT, resolveBrowser } from "./_render.js";
-import { EXIT_NOT_FOUND } from "../utils/exit-codes.js";
 import {
-  error,
   hint,
   info,
   output,
@@ -28,6 +27,22 @@ function resolveRuntime(): string {
   throw new Error("poster: runtime/ not found");
 }
 
+// Find poster's own node_modules so author imports (react, recharts, etc.)
+// resolve even when the entry lives outside any project tree — e.g. a stdin
+// entry written to /var/folders/... User-project deps still win: esbuild
+// walks up from the entry file first, then falls back to nodePaths.
+function findPosterNodeModules(): string | null {
+  let dir = __dirname;
+  for (let i = 0; i < 10; i++) {
+    const nm = join(dir, "node_modules");
+    if (existsSync(nm)) return nm;
+    const parent = dirname(dir);
+    if (parent === dir) return null;
+    dir = parent;
+  }
+  return null;
+}
+
 export interface BuildArgs {
   entry: string;
   out: string;
@@ -40,15 +55,32 @@ export interface BuildArgs {
   ogHeight?: number;
   installBrowser?: boolean;
   browser?: string;
+  /** Explicit location to persist stdin TSX. Ignored when entry is a path. */
+  save?: string;
+  /** Skip persistence — stdin written to a tmp dir, deleted after build. */
+  ephemeral?: boolean;
 }
 
 export async function build(args: BuildArgs, options: OutputOptions): Promise<void> {
-  const entry = resolve(process.cwd(), args.entry);
-  if (!existsSync(entry)) {
-    error(`Entry not found: ${entry}`);
-    process.exit(EXIT_NOT_FOUND);
+  const savePath = args.ephemeral
+    ? null
+    : (args.save ?? defaultSavePath(args.out));
+  const { path: entry, cleanup: cleanupEntry } = await resolveEntry(
+    args.entry,
+    { savePath, announce: !options.quiet && !options.json },
+  );
+  try {
+    await buildFromEntry(entry, args, options);
+  } finally {
+    cleanupEntry();
   }
+}
 
+async function buildFromEntry(
+  entry: string,
+  args: BuildArgs,
+  options: OutputOptions,
+): Promise<void> {
   const runtimeDir = resolveRuntime();
   const shell = readFileSync(join(runtimeDir, "shell.html"), "utf-8");
 
@@ -132,6 +164,7 @@ async function bundleEntry(
     },
   };
 
+  const posterNodeModules = findPosterNodeModules();
   const result = await esbuild.build({
     entryPoints: [bootstrap],
     bundle: true,
@@ -141,6 +174,7 @@ async function bundleEntry(
     jsx: "automatic",
     loader: { ".wasm": "binary" },
     plugins: [virtualEntry],
+    nodePaths: posterNodeModules ? [posterNodeModules] : [],
     logLevel: options.quiet ? "silent" : "warning",
     define: { "process.env.NODE_ENV": '"production"' },
     banner: {

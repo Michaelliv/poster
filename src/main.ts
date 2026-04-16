@@ -19,7 +19,7 @@ program
 
 program
   .command("build <entry>")
-  .description("Build a standalone .html from a .tsx entry file")
+  .description("Build a standalone .html from a .tsx entry file ('-' reads TSX from stdin)")
   .option("-o, --out <path>", "Output .html path", "poster.html")
   .option("-t, --title <title>", "Poster title", "Poster")
   .option("-d, --description <text>", "Meta description / og:description", "")
@@ -30,6 +30,8 @@ program
   .option("--og-height <px>", "OG image height", "630")
   .option("--install-browser", "Download chrome-headless-shell if no system browser is found")
   .option("--browser <path>", "Explicit Chrome/Chromium executable for --og")
+  .option("--save <path>", "Where to persist stdin TSX (default: .poster/<out>.tsx)")
+  .option("--ephemeral", "Skip persistence — stdin written to a tmp dir only")
   .action(async (entry, opts, cmd) => {
     const root = cmd.optsWithGlobals();
     await build(
@@ -45,6 +47,8 @@ program
         ogHeight: Number(opts.ogHeight),
         installBrowser: opts.installBrowser,
         browser: opts.browser,
+        save: opts.save,
+        ephemeral: Boolean(opts.ephemeral),
       },
       { json: root.json, quiet: root.quiet },
     );
@@ -52,7 +56,7 @@ program
 
 program
   .command("export <entry>")
-  .description("Render a .tsx to .png / .svg / .pdf / .jpg / .webp using a system browser")
+  .description("Render a .tsx to .png / .svg / .pdf / .jpg / .webp ('-' reads TSX from stdin)")
   .option("-o, --out <path>", "Output file (format inferred from extension)", "poster.png")
   .option("-f, --format <fmt>", "Force format: png | svg | pdf | jpg | webp")
   .option("-w, --width <px>", "Canvas width", "1440")
@@ -66,6 +70,8 @@ program
     "networkidle0",
   )
   .option("--wait-for <ms>", "Extra ms to wait after navigation (default 1500 to let animations settle)")
+  .option("--save <path>", "Where to persist stdin TSX (default: .poster/<out>.tsx)")
+  .option("--ephemeral", "Skip persistence — stdin written to a tmp dir only")
   .action(async (entry, opts, cmd) => {
     const root = cmd.optsWithGlobals();
     await exportCmd(
@@ -80,6 +86,8 @@ program
         browser: opts.browser,
         waitUntil: opts.waitUntil,
         waitFor: opts.waitFor !== undefined ? Number(opts.waitFor) : undefined,
+        save: opts.save,
+        ephemeral: Boolean(opts.ephemeral),
       },
       { json: root.json, quiet: root.quiet },
     );

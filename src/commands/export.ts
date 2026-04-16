@@ -8,12 +8,13 @@
 //   3. Auto-install chrome-headless-shell via @puppeteer/browsers (~80 MB)
 //      — only when --install-browser is passed, otherwise fail clearly.
 
-import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { dirname, extname, join, resolve } from "node:path";
+import { extname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import puppeteer from "puppeteer-core";
 import { build } from "./build.js";
+import { defaultSavePath, resolveEntry } from "./_entry.js";
 import { NO_BROWSER_HINT, resolveBrowser } from "./_render.js";
 import { EXIT_NOT_FOUND, EXIT_USER_ERROR } from "../utils/exit-codes.js";
 import {
@@ -38,15 +39,32 @@ export interface ExportArgs {
   browser?: string; // explicit path override
   waitUntil?: "load" | "domcontentloaded" | "networkidle0" | "networkidle2";
   waitFor?: number; // extra ms to wait after load
+  /** Explicit location to persist stdin TSX. Ignored when entry is a path. */
+  save?: string;
+  /** Skip persistence — stdin written to a tmp dir, deleted after export. */
+  ephemeral?: boolean;
 }
 
 export async function exportCmd(args: ExportArgs, options: OutputOptions): Promise<void> {
-  const entry = resolve(process.cwd(), args.entry);
-  if (!existsSync(entry)) {
-    error(`Entry not found: ${entry}`);
-    process.exit(EXIT_NOT_FOUND);
+  const savePath = args.ephemeral
+    ? null
+    : (args.save ?? defaultSavePath(args.out));
+  const { path: entry, cleanup: cleanupEntry } = await resolveEntry(
+    args.entry,
+    { savePath, announce: !options.quiet && !options.json },
+  );
+  try {
+    await exportFromEntry(entry, args, options);
+  } finally {
+    cleanupEntry();
   }
+}
 
+async function exportFromEntry(
+  entry: string,
+  args: ExportArgs,
+  options: OutputOptions,
+): Promise<void> {
   const format = args.format ?? inferFormat(args.out);
   if (!format) {
     error(`Cannot infer format from output path. Use --format png|svg|pdf|jpg|webp`);
