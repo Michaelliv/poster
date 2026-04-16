@@ -22,14 +22,11 @@ program
   .description("Build a standalone .html from a .tsx entry file ('-' reads TSX from stdin)")
   .option("-o, --out <path>", "Output .html path", "poster.html")
   .option("-t, --title <title>", "Poster title", "Poster")
-  .option("-d, --description <text>", "Meta description / og:description", "")
+  .option("-d, --description <text>", "Meta description", "")
   .option("-w, --width <px>", "Canvas width", "1440")
   .option("-h, --height <px>", "Canvas height", "900")
-  .option("--og", "Inline og:image as a data URL (renders via system browser)")
-  .option("--og-width <px>", "OG image width", "1200")
-  .option("--og-height <px>", "OG image height", "630")
   .option("--install-browser", "Download chrome-headless-shell if no system browser is found")
-  .option("--browser <path>", "Explicit Chrome/Chromium executable for --og")
+  .option("--browser <path>", "Explicit Chrome/Chromium executable")
   .option("--save <path>", "Where to persist stdin TSX (default: .poster/<out>.tsx)")
   .option("--ephemeral", "Skip persistence — stdin written to a tmp dir only")
   .action(async (entry, opts, cmd) => {
@@ -42,9 +39,6 @@ program
         description: opts.description,
         width: Number(opts.width),
         height: Number(opts.height),
-        og: Boolean(opts.og),
-        ogWidth: Number(opts.ogWidth),
-        ogHeight: Number(opts.ogHeight),
         installBrowser: opts.installBrowser,
         browser: opts.browser,
         save: opts.save,

@@ -6,6 +6,16 @@ All notable changes to `poster-ai` are documented here. Format follows
 
 ## [Unreleased]
 
+### Removed
+
+- `poster build --og` and the two-pass `og:image` data-URL baking. Basic
+  `og:title` / `og:description` / `twitter:card` tags are still emitted
+  from the shell template. Data-URL OG images were supported only by
+  Discord in practice; users who need a real social preview should host
+  a `.png` and point `og:image` at a URL.
+- `BuildOptions.og` (SDK) and the `Poster.renderOgDataUrl` internal.
+- `DEFAULTS.ogWidth` / `DEFAULTS.ogHeight`.
+
 ## [0.2.0] — 2026-04-16
 
 ### Changed

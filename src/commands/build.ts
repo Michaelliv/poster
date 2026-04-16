@@ -22,9 +22,6 @@ export interface BuildArgs {
   description?: string;
   width?: number;
   height?: number;
-  og?: boolean;
-  ogWidth?: number;
-  ogHeight?: number;
   installBrowser?: boolean;
   browser?: string;
   save?: string;
@@ -52,9 +49,6 @@ export async function build(args: BuildArgs, options: OutputOptions): Promise<vo
         description: args.description,
         width: args.width,
         height: args.height,
-        og: args.og
-          ? { width: args.ogWidth, height: args.ogHeight }
-          : undefined,
       },
     );
 
@@ -63,18 +57,11 @@ export async function build(args: BuildArgs, options: OutputOptions): Promise<vo
 
     const sizeKb = (html.length / 1024).toFixed(1);
     output(options, {
-      json: () => ({
-        success: true,
-        out: outPath,
-        sizeKb: Number(sizeKb),
-        ogBaked: Boolean(args.og),
-      }),
+      json: () => ({ success: true, out: outPath, sizeKb: Number(sizeKb) }),
       quiet: () => {},
       human: () => {
         success(`Built ${outPath}`);
-        info(
-          `${sizeKb} KB${args.og ? " · og:image inlined" : ""} — open in any browser`,
-        );
+        info(`${sizeKb} KB — open in any browser`);
       },
     });
   } catch (err) {

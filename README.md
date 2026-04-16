@@ -22,7 +22,6 @@ npm install poster-ai           # library
 
 ```bash
 poster build app.tsx -o app.html            # self-contained .html
-poster build app.tsx -o app.html --og       # ...with og:image baked in
 poster export app.tsx -o out.png            # PNG via headless Chrome
 poster export app.tsx -o out.pdf            # also svg / jpg / webp
 ```
@@ -194,17 +193,6 @@ POSTER_SKIP_BROWSER_DOWNLOAD=1 npm install -g poster-ai   # force skip
 
 If the download fails (offline, proxy, etc.), install still succeeds. Run
 `poster export --install-browser` later to retry.
-
----
-
-## OG images
-
-`poster build --og` bakes a 1200×630 JPEG into the HTML as an `og:image`
-data URL. Social preview support for data URLs is uneven in practice:
-**Discord renders them**; **WhatsApp, Twitter/X, Facebook** currently
-ignore data URLs and fall back to title + description only. For a
-universal preview, pair the HTML with a separately-hosted `.png` and point
-`og:image` at a real URL.
 
 ---
 

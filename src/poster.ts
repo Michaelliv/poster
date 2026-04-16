@@ -35,11 +35,6 @@ export interface BuildOptions {
   width?: number;
   /** Canvas height in CSS pixels. Default 900. */
   height?: number;
-  /**
-   * Bake an og:image data URL into the HTML. Pass `true` for defaults,
-   * or an object to override dimensions.
-   */
-  og?: boolean | { width?: number; height?: number };
 }
 
 export interface RenderOptions extends BuildOptions {
@@ -58,8 +53,6 @@ export interface RenderOptions extends BuildOptions {
 export const DEFAULTS = {
   width: 1440,
   height: 900,
-  ogWidth: 1200,
-  ogHeight: 630,
   deviceScaleFactor: 2,
   waitUntil: "networkidle0" as const,
   waitFor: 1500,
@@ -117,44 +110,11 @@ export class Poster {
     const height = options.height ?? DEFAULTS.height;
 
     const bundle = await bundleEntry(runtimeDir, entry);
-    const meta = { title, width, height };
-
-    if (!options.og) {
-      return renderShell(shell, {
-        title,
-        description,
-        bundle,
-        meta,
-        ogImageDataUrl: null,
-        ogWidth: DEFAULTS.ogWidth,
-        ogHeight: DEFAULTS.ogHeight,
-      });
-    }
-
-    const ogDims = typeof options.og === "object" ? options.og : {};
-    const ogWidth = ogDims.width ?? DEFAULTS.ogWidth;
-    const ogHeight = ogDims.height ?? DEFAULTS.ogHeight;
-
-    // Pass 1: render without og:image, just so the crawler-facing DOM exists.
-    const pass1 = renderShell(shell, {
-      title,
-      description,
-      bundle,
-      meta,
-      ogImageDataUrl: null,
-      ogWidth,
-      ogHeight,
-    });
-    // Pass 2: screenshot pass 1, bake the data URL back in.
-    const dataUrl = await this.renderOgDataUrl(pass1, ogWidth, ogHeight);
     return renderShell(shell, {
       title,
       description,
       bundle,
-      meta,
-      ogImageDataUrl: dataUrl,
-      ogWidth,
-      ogHeight,
+      meta: { title, width, height },
     });
   }
 
@@ -218,42 +178,6 @@ export class Poster {
             : {}),
         }),
       );
-    } finally {
-      await browser.close();
-      rmSync(tmpDir, { recursive: true, force: true });
-    }
-  }
-
-  /** Render the given HTML to a JPEG data URL for use as og:image. */
-  private async renderOgDataUrl(
-    html: string,
-    width: number,
-    height: number,
-  ): Promise<string> {
-    const executablePath = await this.requireBrowser();
-    const tmpDir = mkdtempSync(join(tmpdir(), "poster-og-"));
-    const tmpHtml = join(tmpDir, "og.html");
-    writeFileSync(tmpHtml, html);
-
-    const browser = await puppeteer.launch({
-      executablePath,
-      headless: true,
-      // hinting=none is deliberate here: OG runs at DSF=1, and disabling
-      // hinting yields smaller, more consistent JPEGs for the data URL.
-      args: ["--no-sandbox", "--disable-setuid-sandbox", "--font-render-hinting=none"],
-    });
-    try {
-      const page = await browser.newPage();
-      // DSF=1 — crawlers cache at canonical size; 2x just bloats the URL.
-      await page.setViewport({ width, height, deviceScaleFactor: 1 });
-      await page.goto(pathToFileURL(tmpHtml).href, { waitUntil: "networkidle0" });
-      await new Promise((r) => setTimeout(r, 1500));
-      const buf = await page.screenshot({
-        type: "jpeg",
-        quality: 82,
-        clip: { x: 0, y: 0, width, height },
-      });
-      return `data:image/jpeg;base64,${Buffer.from(buf).toString("base64")}`;
     } finally {
       await browser.close();
       rmSync(tmpDir, { recursive: true, force: true });
@@ -346,29 +270,12 @@ interface ShellRenderArgs {
   description: string;
   bundle: string;
   meta: { title: string; width: number; height: number };
-  ogImageDataUrl: string | null;
-  ogWidth: number;
-  ogHeight: number;
 }
 
 function renderShell(shell: string, a: ShellRenderArgs): string {
-  const ogImageTags = a.ogImageDataUrl
-    ? [
-        `<meta property="og:image" content="${a.ogImageDataUrl}" />`,
-        `<meta property="og:image:type" content="image/jpeg" />`,
-        `<meta property="og:image:width" content="${a.ogWidth}" />`,
-        `<meta property="og:image:height" content="${a.ogHeight}" />`,
-      ].join("\n    ")
-    : "";
-  const twitterImageTag = a.ogImageDataUrl
-    ? `<meta name="twitter:image" content="${a.ogImageDataUrl}" />`
-    : "";
-
   return shell
     .replaceAll("{{TITLE}}", escapeHtml(a.title))
     .replaceAll("{{DESCRIPTION}}", escapeHtml(a.description))
-    .replace("{{OG_IMAGE_TAGS}}", ogImageTags)
-    .replace("{{TWITTER_IMAGE_TAG}}", twitterImageTag)
     .replaceAll(
       "{{META_JSON}}",
       JSON.stringify(a.meta).replace(/</g, "\\u003c"),
