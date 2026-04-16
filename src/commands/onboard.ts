@@ -4,7 +4,7 @@ import { output, success, type OutputOptions } from "../utils/output.js";
 
 const INSTRUCTIONS = `
 <poster>
-Use \`poster\` to produce single-file distributable React pages. One \`.tsx\` file with a default-exported component compiles to one \`.html\` file that opens in any browser, renders live, and can export itself as PNG / SVG / JPG / WebP / PDF via a floating toolbar (powered by snapDOM + jsPDF).
+Use \`poster\` to produce single-file distributable React pages. One \`.tsx\` file with a default-exported component compiles to one \`.html\` file that opens in any browser and renders live. Export to PNG / SVG / JPG / WebP / PDF is handled by the \`poster export\` CLI — the HTML itself is view-only.
 
 <commands>
 - \`poster build app.tsx -o app.html\` — build a standalone HTML.

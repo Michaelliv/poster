@@ -82,7 +82,9 @@ export async function exportCmd(args: ExportArgs, options: OutputOptions): Promi
     const browser = await puppeteer.launch({
       executablePath,
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox", "--font-render-hinting=none"],
+      // No --font-render-hinting=none: it disables subpixel hinting and
+      // visibly softens text. Default hinting matches what users see live.
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
     try {
       const page = await browser.newPage();
@@ -95,8 +97,6 @@ export async function exportCmd(args: ExportArgs, options: OutputOptions): Promi
       const waitMs = args.waitFor ?? 1500;
       if (waitMs > 0) await new Promise((r) => setTimeout(r, waitMs));
 
-      // Hide the export toolbar — we don't want it baked into the artifact.
-      await page.addStyleTag({ content: "#poster-toolbar{display:none !important;}" });
 
       if (format === "pdf") {
         const pdf = await page.pdf({

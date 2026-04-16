@@ -227,7 +227,6 @@ async function renderOgDataUrl(
     await page.goto(pathToFileURL(tmpHtml).href, { waitUntil: "networkidle0" });
     // Let chart animations settle before snapshotting the OG image.
     await new Promise((r) => setTimeout(r, 1500));
-    await page.addStyleTag({ content: "#poster-toolbar{display:none !important;}" });
 
     // JPEG @ 82 quality strikes a good balance — keeps data URL ~80–150 KB
     // which stays within the meta-tag size budgets of major crawlers.

@@ -22,32 +22,10 @@
     <style>
       html, body { margin: 0; padding: 0; background: #fafafa; font-family: Inter, system-ui, sans-serif; }
       #poster-root { min-height: 100vh; }
-      #poster-toolbar {
-        position: fixed; bottom: 16px; right: 16px; z-index: 999999;
-        display: flex; gap: 6px; padding: 6px;
-        background: rgba(20,20,20,0.92); backdrop-filter: blur(8px);
-        border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);
-        font-family: ui-monospace, monospace; font-size: 12px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-      }
-      #poster-toolbar button {
-        background: transparent; color: #e4e4e7; border: 1px solid transparent;
-        padding: 4px 10px; border-radius: 6px; cursor: pointer;
-      }
-      #poster-toolbar button:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.12); }
-      #poster-toolbar button:disabled { opacity: 0.4; cursor: wait; }
-      #poster-toolbar .label { color: #71717a; padding: 4px 6px 4px 10px; }
     </style>
   </head>
   <body>
     <div id="poster-root"></div>
-    <div id="poster-toolbar">
-      <span class="label">export</span>
-      <button data-export="png">PNG</button>
-      <button data-export="svg">SVG</button>
-      <button data-export="webp">WebP</button>
-      <button data-export="pdf">PDF</button>
-    </div>
     <script>window.__POSTER_META__ = {{META_JSON}};</script>
     <script>{{BUNDLE_JS}}</script>
   </body>
