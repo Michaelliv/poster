@@ -1,28 +1,56 @@
-# Poster
+# poster
 
-> One `.tsx` file, every format you'll ever need.
+<p align="center">
+  <img src="docs/images/hero.png" alt="poster — one .tsx file, every format you'll ever need" width="100%" />
+</p>
 
-A default-exported React component compiles to a self-contained `.html` file and renders to PNG / SVG / JPG / WebP / PDF via headless Chrome. Works as a **CLI** and as a **library**.
+> **One `.tsx` file, every format you'll ever need.**
 
-## Install
+Write a React component. Get a self-contained `.html` file, a PNG, a PDF, an
+SVG, a JPG, or a WebP — at any canvas size. No browser fidelity loss, no
+Satori-subset restrictions, no design-tool lock-in. Works as a **CLI** for
+humans and as a **library** for agents and services.
 
 ```bash
-npm install -g poster-ai         # CLI (installs the `poster` binary)
-npm install poster-ai            # library
+npm install -g poster-ai        # CLI (installs the `poster` binary)
+npm install poster-ai           # library
 ```
+
+---
 
 ## CLI
 
 ```bash
-poster build app.tsx -o app.html            # standalone .html
+poster build app.tsx -o app.html            # self-contained .html
 poster build app.tsx -o app.html --og       # ...with og:image baked in
-poster export app.tsx -o out.png            # render via headless Chrome
-
-cat app.tsx | poster export - -o out.png    # or pipe TSX on stdin
+poster export app.tsx -o out.png            # PNG via headless Chrome
+poster export app.tsx -o out.pdf            # also svg / jpg / webp
 ```
 
-Any entry of `-` reads TSX from stdin and persists to `.poster/<basename>.tsx`
-so an agent can iterate on it next run. Pass `--ephemeral` to skip persistence.
+Every command supports `--width`, `--height`, `--json`, and `--quiet`.
+
+### Inline authoring for agents
+
+Pass `-` as the entry and pipe TSX on stdin:
+
+```bash
+cat <<'EOF' | poster export - -o hero.png --width 1200 --height 600
+export default function() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-black text-white">
+      <h1 className="text-7xl font-black">Hello, poster.</h1>
+    </div>
+  );
+}
+EOF
+```
+
+Stdin is persisted to `.poster/hero.tsx` by default so you can iterate —
+either re-pipe updated TSX, or edit the saved file and run
+`poster export .poster/hero.tsx -o hero.png`. Pass `--ephemeral` for
+one-shot CI renders that touch no disk.
+
+---
 
 ## Library
 
@@ -34,7 +62,7 @@ const poster = new Poster();
 
 // TSX → self-contained HTML string
 const html = await poster.buildHtml(
-  { tsx: `export default () => <h1 className="text-5xl">Hi</h1>` },
+  { tsx: `export default () => <h1 className="text-5xl p-10">Hi</h1>` },
   { title: "Hello", width: 1200, height: 600 },
 );
 
@@ -52,59 +80,157 @@ const pdf = await poster.render(
 );
 ```
 
-Inputs are discriminated: `{ tsx }` for in-memory source, `{ file }` for a
-path on disk. No side effects — the SDK returns data; the caller writes it.
-Errors throw; no `process.exit` from inside the library.
+- **Discriminated input.** `{ tsx }` for in-memory source, `{ file }` for a
+  path. No ambiguity.
+- **Pure.** Returns data; the caller writes it. No stdout writes, no
+  `process.exit`, errors throw.
+- **Typed.** Full `.d.ts` shipped. `BuildOptions`, `RenderOptions`,
+  `ExportFormat`, `DEFAULTS` all exported.
 
-## Authoring a poster
+---
+
+## What it looks like
+
+All seven designs below are a single `.tsx` file each, rendered through the
+same pipeline. They live under [`examples/`](./examples) — copy one, tweak,
+re-export.
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/images/showcase.png" alt="Nebula dashboard — 7 visualizations in one poster" /></td>
+    <td width="50%"><img src="docs/images/neon.jpg" alt="Neon Dreams — 80s synthwave title card" /></td>
+  </tr>
+  <tr>
+    <td><strong><a href="examples/showcase.tsx">showcase.tsx</a></strong> — seven Recharts visualizations in one poster, shared gradient defs, glowing cards.</td>
+    <td><strong><a href="examples/neon.tsx">neon.tsx</a></strong> — perspective grid, gradient sun with scan lines, text-clip gradient headline.</td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/images/editorial.png" alt="The Almanac — editorial climate poster" /></td>
+    <td width="50%"><img src="docs/images/wrapped.jpg" alt="Wrapped 2025 — Spotify-style year in review" /></td>
+  </tr>
+  <tr>
+    <td><strong><a href="examples/editorial.tsx">editorial.tsx</a></strong> — Source Serif 4 masthead, temperature-anomaly area chart, sector breakdown.</td>
+    <td><strong><a href="examples/wrapped.tsx">wrapped.tsx</a></strong> — saturated radial gradient, 220px tabular-num hero, top-artist bars.</td>
+  </tr>
+</table>
+
+Not shown, also in `examples/`: dashboards (Prism analytics, GitHub year-in-review, fitness rings), a glassmorphic weather card, a 90s Memphis invite, a Berlin concert poster, a calendar page, a brutalist magazine spread. Each is ~150–350 lines. No shared helpers — copy the one you like and make it yours.
+
+---
+
+## Authoring
+
+A poster is a file that default-exports a React component.
 
 ```tsx
-import { LineChart, Line, XAxis, YAxis } from "recharts";
+import { AreaChart, Area, XAxis, YAxis } from "recharts";
+import { SparklesIcon } from "lucide-react";
 
-const data = [{ name: "Jan", v: 400 }, { name: "Feb", v: 300 }];
+const data = Array.from({ length: 24 }, (_, i) => ({
+  h: i,
+  v: 50 + Math.sin(i * 0.5) * 20,
+}));
 
 export default function App() {
   return (
-    <div className="p-10">
-      <h1 className="text-3xl font-semibold">Hello</h1>
-      <LineChart width={400} height={200} data={data}>
-        <XAxis dataKey="name" />
-        <YAxis />
-        <Line dataKey="v" />
-      </LineChart>
+    <div className="min-h-screen p-10 bg-black text-white">
+      <SparklesIcon className="h-5 w-5" />
+      <h1 className="mt-4 text-5xl font-black">Hello</h1>
+      <div className="h-[300px] mt-8">
+        <AreaChart data={data} width={800} height={300}>
+          <XAxis dataKey="h" />
+          <YAxis />
+          <Area dataKey="v" stroke="#22d3ee" fill="#22d3ee40" />
+        </AreaChart>
+      </div>
     </div>
   );
 }
 ```
 
-Use anything that works in the browser — Recharts, lucide-react, Tailwind classes (via CDN), shadcn/ui, lodash. No authoring constraints.
+**In the box:** React 19, Tailwind (via CDN), [Recharts](https://recharts.org),
+[lucide-react](https://lucide.dev), Inter + Source Serif 4 + JetBrains Mono
+(loaded via Google Fonts so exports are consistent across machines).
+
+**No authoring restrictions** — this isn't Satori. Anything that renders in
+Chrome renders here: hooks, context, `useState`, animations, SVG, CSS
+gradients, `backdrop-filter`, fonts, the lot.
+
+---
 
 ## Export pipeline
 
-Exports go through a headless browser via `puppeteer-core` — screenshotting the rendered DOM so there's no Satori-subset fidelity loss. Resolution order at runtime: system Chrome / Brave / Edge (preferred — warmer, newer), then a bundled `chrome-headless-shell` that was downloaded by the package's postinstall step.
+Exports screenshot the rendered DOM through a headless browser
+(`puppeteer-core`). No Satori-subset fidelity loss — what you see in Chrome
+is what lands in the PNG, pixel-for-pixel, at DSF 2 for retina.
 
-### Browser install
+**Browser resolution:**
 
-When you `npm install poster-ai` (or `bun install poster-ai`), a postinstall script fetches `chrome-headless-shell` (~80 MB) into `~/.cache/poster-browsers/`. This means `poster export` works out of the box on fresh machines with no Chrome installed.
+1. `--browser <path>` if given
+2. System Chrome / Brave / Edge / Chromium
+3. Cached `chrome-headless-shell` from `@puppeteer/browsers`
+4. Auto-install (~80 MB) if `--install-browser` is passed
 
-Opt out with `POSTER_SKIP_BROWSER_DOWNLOAD=1`:
+| Format | Quality | Notes |
+|---|---|---|
+| `png` | Lossless, DSF 2 | Transparent background unless poster paints one |
+| `jpg` | Quality 100 | White background from the shell's body |
+| `webp` | Quality 100 | Smallest raster format at comparable fidelity |
+| `pdf` | Vector text + SVG, raster images at 96 DPI | Text stays selectable |
+| `svg` | Scalable, fonts embedded | Captured via snapDOM in-page |
+
+### Browser download
+
+On **global** install (`npm install -g poster-ai`), a postinstall step
+fetches `chrome-headless-shell` (~80 MB) to `~/.cache/poster-browsers/` so
+`poster export` works out of the box. **Local** installs (library
+consumers) skip the download by default — you have your own Chrome, or
+you'll opt in explicitly:
 
 ```bash
-POSTER_SKIP_BROWSER_DOWNLOAD=1 npm install -g poster-ai
+POSTER_INSTALL_BROWSER=1 npm install poster-ai   # force download
+POSTER_SKIP_BROWSER_DOWNLOAD=1 npm install -g poster-ai   # force skip
 ```
 
-If the download fails (offline, corporate proxy, etc.), the install still succeeds with a warning. You can retry later with `poster export --install-browser`.
+If the download fails (offline, proxy, etc.), install still succeeds. Run
+`poster export --install-browser` later to retry.
+
+---
 
 ## OG images
 
-`poster build --og` bakes a 1200×630 JPEG into the HTML as an `og:image` data URL. When hosted (any static host) social crawlers pick it up. Platform support for data URLs in `og:image` is uneven in practice: Discord renders them; WhatsApp / Twitter / Facebook currently ignore data URLs and fall back to title + description only. If you need a universal preview image, pair the HTML with a separately-hosted `.png` and update the meta tags to point at it.
+`poster build --og` bakes a 1200×630 JPEG into the HTML as an `og:image`
+data URL. Social preview support for data URLs is uneven in practice:
+**Discord renders them**; **WhatsApp, Twitter/X, Facebook** currently
+ignore data URLs and fall back to title + description only. For a
+universal preview, pair the HTML with a separately-hosted `.png` and point
+`og:image` at a real URL.
+
+---
 
 ## For agents
 
-Every CLI command supports `--json` for machine-readable output. Combined
-with stdin entries (`poster export - -o out.png`), an agent can generate
-visuals in a single pass with no filesystem scaffolding.
+- Every CLI command supports `--json` for machine-readable output.
+- Entry `-` reads TSX from stdin, so a single call produces an image with
+  no filesystem scaffolding: `echo '...' | poster export - -o out.png`.
+- Saved `.poster/<name>.tsx` lets the agent iterate on its own output.
+- The SDK (`import { Poster }`) is pure: discriminated input, data out,
+  errors throw. No process control, no ambient logging.
+
+See also: `examples/` — twelve of them are hand-authored, seven of those
+were generated via a single stdin call each. Exact workflow an agent will use.
+
+---
+
+## Requirements
+
+- Node 18+
+- macOS, Linux, or Windows
+- Chrome / Brave / Edge installed, **or** ~80 MB for the fallback
+  `chrome-headless-shell`
+
+---
 
 ## License
 
-MIT
+MIT — see [LICENSE](./LICENSE).

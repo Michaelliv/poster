@@ -12,11 +12,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      POSTER_SKIP_BROWSER_DOWNLOAD: "1"
+      POSTER_INSTALL_BROWSER: "1"
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - run: bun install
+      - run: bun run build
       - run: bun test
 
   release:
@@ -33,6 +34,9 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     env:
+      # The package we publish is the same whether or not we've downloaded
+      # a browser locally — 'files' is [dist], postinstall runs on the
+      # consumer's machine, not ours.
       POSTER_SKIP_BROWSER_DOWNLOAD: "1"
     steps:
       - uses: actions/checkout@v4
@@ -43,6 +47,6 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
       - run: npm run build
-      - run: npm publish
+      - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
