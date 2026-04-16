@@ -97,7 +97,6 @@ export async function exportCmd(args: ExportArgs, options: OutputOptions): Promi
       const waitMs = args.waitFor ?? 1500;
       if (waitMs > 0) await new Promise((r) => setTimeout(r, waitMs));
 
-
       if (format === "pdf") {
         const pdf = await page.pdf({
           width: `${width}px`,

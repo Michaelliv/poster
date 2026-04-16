@@ -218,6 +218,9 @@ async function renderOgDataUrl(
   const browser = await puppeteer.launch({
     executablePath,
     headless: true,
+    // hinting=none is deliberate here (unlike `poster export`): OG runs at
+    // DSF=1, and disabling hinting yields smaller, more consistent JPEGs for
+    // the data URL. `poster export` omits it to keep text crisp at DSF=2.
     args: ["--no-sandbox", "--disable-setuid-sandbox", "--font-render-hinting=none"],
   });
   try {
