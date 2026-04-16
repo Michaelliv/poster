@@ -65,7 +65,7 @@ If the download fails (offline, corporate proxy, etc.), the install still succee
 
 ## For agents
 
-`poster onboard` appends authoring instructions to `CLAUDE.md` or `AGENTS.md`. Every command supports `--json` for machine-readable output.
+Every command supports `--json` for machine-readable output.
 
 ## License
 

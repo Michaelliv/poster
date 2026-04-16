@@ -18,7 +18,7 @@ bunx tsc --noEmit  # type-check including runtime/
 
 ## Architecture
 
-**1. CLI (`src/main.ts` + `src/commands/`).** Commander entry. `build` bundles, `dev` watches + serves, `export` renders via headless Chrome, `og` is an `export` preset at 1200×630 PNG, `onboard` teaches agents.
+**1. CLI (`src/main.ts` + `src/commands/`).** Commander entry. `build` bundles a `.tsx` + runtime into a single `.html`; `export` renders that HTML to PNG / SVG / PDF / JPG / WebP via headless Chrome.
 
 **2. Build step (`src/commands/build.ts`).** esbuild bundles `src/runtime/bootstrap.tsx` (which imports `virtual:poster-entry`, rewritten by a plugin to the user's `.tsx`) into a single IIFE. The IIFE is inlined into `src/runtime/shell.html` along with `__POSTER_META__` and OG/Twitter meta tags. With `--og`, build does a two-pass: render the HTML to a JPEG via puppeteer, base64-embed as `og:image` data URL, then re-template.
 

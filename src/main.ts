@@ -4,7 +4,6 @@ import { createRequire } from "node:module";
 import { Command } from "commander";
 import { build } from "./commands/build.js";
 import { exportCmd, type ExportFormat } from "./commands/export.js";
-import { onboard } from "./commands/onboard.js";
 
 const require = createRequire(import.meta.url);
 const { version } = require("../package.json");
@@ -86,13 +85,6 @@ program
     );
   });
 
-program
-  .command("onboard")
-  .description("Add poster instructions to CLAUDE.md or AGENTS.md")
-  .action(async (_opts, cmd) => {
-    const root = cmd.optsWithGlobals();
-    await onboard({ json: root.json, quiet: root.quiet });
-  });
 
 program.parseAsync(process.argv).catch((err) => {
   console.error("Fatal error:", err.message);
