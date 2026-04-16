@@ -6,18 +6,28 @@ All notable changes to `poster-ai` are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-04-16
+
 ### Changed
 
 - Postinstall now downloads `chrome-headless-shell` **only** on global
   installs (`npm install -g poster-ai`) or when `POSTER_INSTALL_BROWSER=1`
-  is set. Local/library installs skip the 80 MB download by default.
+  is set. Local/library installs skip the 80 MB download by default. This
+  makes `poster-ai` polite to import as a pure SDK in services that already
+  have Chrome, Lambda environments with a chromium layer, etc.
+- README rewritten with a hero image, a 2×2 example gallery, a format
+  quality matrix, and an explicit library section.
 
 ### Added
 
-- Smoke tests: `bun test` covers `Poster.buildHtml`, `Poster.render` (PNG
-  output), CLI stdin entry round-trip, and `inferFormat`. Browser-dependent
-  tests auto-skip when no Chrome is resolvable.
+- Smoke tests (`bun test`) — 5 tests, 29 assertions: `Poster.buildHtml`
+  shell/title/dims/bundle substitution, missing-file error path,
+  `Poster.render` PNG magic-byte check, CLI stdin round-trip,
+  `inferFormat` edge cases. Browser-dependent tests auto-skip when no
+  Chrome is resolvable, so the suite runs clean on bare machines.
 - `CHANGELOG.md`.
+- CI now forces `POSTER_INSTALL_BROWSER=1` so integration tests exercise
+  the real render path against a cached `chrome-headless-shell`.
 
 ## [0.1.0] — 2026-04-16
 
