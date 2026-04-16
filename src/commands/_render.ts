@@ -52,7 +52,7 @@ export interface ResolveBrowserOptions {
 
 export async function resolveBrowser(
   opts: ResolveBrowserOptions,
-  output: OutputOptions,
+  options: OutputOptions,
 ): Promise<string | null> {
   if (opts.browser) {
     return existsSync(opts.browser) ? opts.browser : null;
@@ -80,7 +80,7 @@ export async function resolveBrowser(
     if (existsSync(execPath)) return execPath;
 
     if (opts.allowInstall) {
-      if (!output.quiet) info(`Installing chrome-headless-shell @ ${buildId}…`);
+      if (!options.quiet) info(`Installing chrome-headless-shell @ ${buildId}…`);
       const installed = await install({
         browser: BrowserEnum.CHROMEHEADLESSSHELL,
         buildId,
@@ -92,7 +92,7 @@ export async function resolveBrowser(
   } catch (err) {
     // Surface network / registry failures instead of masking them as
     // "no browser found".
-    if (!output.quiet) {
+    if (!options.quiet) {
       console.error(
         `[poster] browser registry lookup failed: ${(err as Error).message}`,
       );
