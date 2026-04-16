@@ -397,7 +397,7 @@ If the download fails (offline, proxy, etc.), install still succeeds. Run
 - The renderer auto-fits the canvas to whatever the root `w-[Npx]` declares,
   so agents don't have to think about viewport sizes.
 
-For [pi-coding-agent](https://github.com/Michaelliv/pi-coding-agent) users,
+For [pi](https://github.com/badlogic/pi-mono) users,
 [**pi-poster**](https://github.com/Michaelliv/pi-poster) registers a
 `poster_render` tool plus a comprehensive `poster` skill so the agent
 knows the layout grammar, color systems, font floor, and signature
