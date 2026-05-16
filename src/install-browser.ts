@@ -1,13 +1,14 @@
 #!/usr/bin/env node
-// postinstall — fetches chrome-headless-shell so `poster export` / `poster og`
-// work out of the box without requiring the user to have Chrome installed.
+// postinstall — optionally fetches chrome-headless-shell.
 //
-// Skip this step with POSTER_SKIP_BROWSER_DOWNLOAD=1 (CI, offline installs, or
-// environments that already have Chrome and don't want the extra ~80 MB).
+// Default for `poster export` is the Takumi (browserless) engine, so most
+// users don't need Chrome at install time. We only download chrome-headless-shell
+// when the user explicitly asks for it via POSTER_INSTALL_BROWSER=1. Chrome is
+// the opt-in engine, reached via `--engine chrome` at runtime.
 //
-// Failure here never aborts `npm install` — the CLI falls back to system
-// browsers at runtime, and users can always run `poster export --install-browser`
-// later to retry.
+// Failure here never aborts `npm install` — the Chrome engine has a runtime
+// fallback to system browsers, and users can always run
+// `poster export --engine chrome --install-browser` later to retry.
 
 import { existsSync } from "node:fs";
 import {
@@ -22,15 +23,8 @@ import { BROWSER_CACHE_DIR } from "./utils/browser-cache.js";
 
 // Should the postinstall actually download Chrome?
 //
-// YES when:
-//   - Global install (`npm install -g poster-ai`) — user wants the CLI.
-//   - Explicit opt-in via POSTER_INSTALL_BROWSER=1.
-//
-// NO when:
-//   - Local / transitive install — likely a library consumer who has their
-//     own Chrome, runs in Lambda with chromium layer, etc. They can still
-//     call `poster export --install-browser` later to grab it.
-//   - POSTER_SKIP_BROWSER_DOWNLOAD=1 is set.
+// Only YES when POSTER_INSTALL_BROWSER=1 is set. Takumi is the default engine;
+// Chrome is the opt-in engine and the user opts into the install too.
 function shouldDownload(): { run: boolean; reason: string } {
   if (process.env.POSTER_SKIP_BROWSER_DOWNLOAD) {
     return { run: false, reason: "POSTER_SKIP_BROWSER_DOWNLOAD is set" };
@@ -38,11 +32,10 @@ function shouldDownload(): { run: boolean; reason: string } {
   if (process.env.POSTER_INSTALL_BROWSER === "1") {
     return { run: true, reason: "POSTER_INSTALL_BROWSER=1" };
   }
-  // npm and bun both expose npm_config_global on a `-g` install.
-  if (process.env.npm_config_global === "true") {
-    return { run: true, reason: "global install" };
-  }
-  return { run: false, reason: "local install (library consumer)" };
+  return {
+    run: false,
+    reason: "Takumi is the default engine; set POSTER_INSTALL_BROWSER=1 to fetch chrome-headless-shell",
+  };
 }
 
 async function main() {

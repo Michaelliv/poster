@@ -22,8 +22,6 @@ export interface BuildArgs {
   description?: string;
   width?: number;
   height?: number;
-  installBrowser?: boolean;
-  browser?: string;
   save?: string;
   ephemeral?: boolean;
 }
@@ -41,10 +39,7 @@ export async function build(
   });
 
   try {
-    const poster = new Poster({
-      browser: args.browser,
-      installBrowser: args.installBrowser,
-    });
+    const poster = new Poster();
     const html = await poster.buildHtml(
       { file: entry.path },
       {

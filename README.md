@@ -21,11 +21,13 @@ npm install poster-ai           # library
 
 ```bash
 poster build app.tsx -o app.html            # self-contained .html
-poster export app.tsx -o out.png            # PNG via headless Chrome
-poster export app.tsx -o out.pdf            # also svg / jpg / webp
+poster export app.tsx -o out.png            # PNG, browserless by default
+poster export app.tsx -o out.pdf --engine chrome   # pdf / svg / jpg / webp
 ```
 
 **The canvas comes from the TSX itself.** Declare `w-[Npx]` (and optionally `h-[Npx]`) on the root element - the renderer measures it and crops to that exact box. `--width` / `--height` are optional overrides for forcing a viewport size. Every command also supports `--json` and `--quiet`.
+
+**Two engines.** PNG export defaults to **`takumi`** — a pure-Rust headless renderer that needs no Chrome download. Pass `--engine chrome` for PDF, SVG, JPG, WebP, or for pixel parity with Chrome on complex CSS (gradient text, multi-layer blurs, SVG `<text>`). See [Engines](#engines) for the trade-offs.
 
 ### Inline authoring for agents
 
@@ -64,15 +66,15 @@ const html = await poster.buildHtml(
   { title: "Hello", width: 1200, height: 600 },
 );
 
-// TSX → PNG Buffer (also jpg / webp / pdf → Buffer, svg → string)
+// TSX → PNG Buffer via the default (takumi) engine. No browser needed.
 const png = await poster.render(
   { tsx: source },
   { format: "png", width: 1600, height: 900 },
 );
 writeFileSync("poster.png", png);
 
-// Or render a file on disk
-const pdf = await poster.render(
+// PDF / SVG / JPG / WebP need the chrome engine.
+const pdf = await new Poster({ engine: "chrome" }).render(
   { file: "./app.tsx" },
   { format: "pdf", width: 1400, height: 1800 },
 );
@@ -338,48 +340,79 @@ export default function App() {
 [lucide-react](https://lucide.dev), Inter + Source Serif 4 + JetBrains Mono
 (loaded via Google Fonts so exports are consistent across machines).
 
-**No authoring restrictions.** Anything that renders in Chrome renders
-here: hooks, context, `useState`, animations, SVG, CSS gradients,
-`backdrop-filter`, fonts, the lot.
+**Authoring surface depends on the engine.** With `--engine chrome`,
+anything that renders in Chrome renders here — hooks, context, `useState`,
+animations, SVG, CSS gradients, `backdrop-filter`, fonts, the lot. With the
+default `takumi` engine, the CSS subset is large but not complete: most
+posters work as-is; a few patterns (gradient text, multi-layer absolute
+blurs, SVG `<text>` inside serialized images) need authoring tweaks.
 
 ---
 
-## Export pipeline
+## Engines
 
-Exports screenshot the rendered DOM through a headless browser
-(`puppeteer-core`). What you see in Chrome is what lands in the PNG,
-pixel-for-pixel, at DSF 2 for retina.
+`poster export` runs through one of two engines. Pick with `--engine` or
+the `engine` option on the SDK.
 
-**Browser resolution:**
+### `takumi` — default
+
+A pure-Rust headless renderer (taffy + parley + skrifa + resvg) shipped
+as a NAPI native module. Real Tailwind v4 expands every class server-side
+before handoff; Google Fonts CSS is fetched once and cached at
+`~/.cache/poster/fonts/`; bare `import` specifiers auto-resolve through
+esm.sh and cache at `~/.cache/poster/modules/`. Output is 2x physical
+pixels for retina parity.
+
+- **No browser, no download, fast.**
+- **PNG only.** PDF / SVG / JPG / WebP require `--engine chrome`.
+- **Subset of CSS.** Most posters work; some patterns need authoring
+  tweaks (gradient text needs `display: inline-block` +
+  `WebkitTextFillColor: transparent`; `overflow-hidden` on auto-height
+  cards can clip).
+
+### `chrome` — opt-in
+
+Puppeteer drives a real Chromium and screenshots the rendered DOM
+(DSF 2 for retina). What you see in Chrome is what lands in the file,
+pixel-for-pixel.
+
+- **Every format.** PNG, JPG, WebP, PDF (vector text), SVG (snapDOM).
+- **Full CSS.** Anything Chrome renders works.
+- **Needs Chrome.** Uses system Chrome / Brave / Edge if present;
+  otherwise downloads `chrome-headless-shell` (~80 MB) on demand.
+
+Browser resolution (chrome engine only):
 
 1. `--browser <path>` if given
 2. System Chrome / Brave / Edge / Chromium
 3. Cached `chrome-headless-shell` from `@puppeteer/browsers`
 4. Auto-install (~80 MB) if `--install-browser` is passed
 
-| Format | Quality | Notes |
-|---|---|---|
-| `png` | Lossless, DSF 2 | Transparent background unless poster paints one |
-| `jpg` | Quality 100 | White background from the shell's body |
-| `webp` | Quality 100 | Smallest raster format at comparable fidelity |
-| `pdf` | Vector text + SVG, raster images at 96 DPI | Text stays selectable |
-| `svg` | Scalable, fonts embedded | Captured via snapDOM in-page |
+### Format support matrix
+
+| Format | `takumi` | `chrome` | Notes |
+|---|---|---|---|
+| `png` | ✓ default | ✓ | Lossless, DSF 2. Transparent unless poster paints a background. |
+| `jpg` | — | ✓ | Quality 100. White background from the shell's body. |
+| `webp` | — | ✓ | Quality 100. Smallest raster at comparable fidelity. |
+| `pdf` | — | ✓ | Vector text + SVG, raster images at 96 DPI. Text stays selectable. |
+| `svg` | — | ✓ | Scalable, fonts embedded. Captured via snapDOM in-page. |
 
 ### Browser download
 
-On **global** install (`npm install -g poster-ai`), a postinstall step
-fetches `chrome-headless-shell` (~80 MB) to `~/.cache/poster-browsers/` so
-`poster export` works out of the box. **Local** installs (library
-consumers) skip the download by default - you have your own Chrome, or
-you'll opt in explicitly:
+The postinstall **never** downloads Chrome by default — the default engine
+is browserless. Opt in explicitly when you want the Chrome engine ready
+out of the box:
 
 ```bash
-POSTER_INSTALL_BROWSER=1 npm install poster-ai   # force download
-POSTER_SKIP_BROWSER_DOWNLOAD=1 npm install -g poster-ai   # force skip
+POSTER_INSTALL_BROWSER=1 npm install -g poster-ai   # prefetch ~80 MB
+POSTER_SKIP_BROWSER_DOWNLOAD=1 npm install poster-ai  # always skip
 ```
 
-If the download fails (offline, proxy, etc.), install still succeeds. Run
-`poster export --install-browser` later to retry.
+If the download fails (offline, proxy, etc.), install still succeeds.
+Run `poster export --engine chrome --install-browser` later to retry,
+or install Chrome / Brave / Edge through your OS and skip the bundled
+binary entirely.
 
 ---
 
@@ -409,8 +442,9 @@ input produced what output.
 
 - Node 18+
 - macOS, Linux, or Windows
-- Chrome / Brave / Edge installed, **or** ~80 MB for the fallback
-  `chrome-headless-shell`
+- **For PNG (default engine):** nothing else — Takumi ships as a NAPI module.
+- **For PDF / SVG / JPG / WebP (`--engine chrome`):** Chrome / Brave / Edge
+  installed, **or** ~80 MB for the fallback `chrome-headless-shell`.
 
 ---
 

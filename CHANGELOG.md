@@ -6,6 +6,43 @@ All notable changes to `poster-ai` are documented here. Format follows
 
 ## [Unreleased]
 
+### Added
+
+- **Takumi engine — browserless PNG export, now the default.** A pure-Rust
+  headless renderer (taffy + parley + skrifa + resvg) ships as a NAPI
+  native module. `poster export <entry> -o out.png` no longer requires
+  Chrome. Tailwind v4 classes are expanded server-side via
+  `@tailwindcss/node`; Google Fonts CSS is fetched and woff2 cached at
+  `~/.cache/poster/fonts/`; bare imports auto-resolve through esm.sh and
+  cache at `~/.cache/poster/modules/`. Output is 2x physical pixels.
+- **`--engine <takumi|chrome>` CLI flag.** Defaults to `takumi`. Pass
+  `--engine chrome` for PDF, SVG, JPG, WebP, or for posters that depend
+  on Chrome-specific CSS.
+- **`Engine` type and `engine` SDK option.** `new Poster({ engine: "chrome" })`
+  forces the browser path; default is `"takumi"`.
+- **Comparison harness** under `scripts/compare/` — renders every example
+  through Takumi and ranks pixel divergence against the Chromium
+  reference PNGs in `examples/`. Useful as a regression gate.
+
+### Changed
+
+- **Postinstall no longer auto-downloads `chrome-headless-shell`.** The
+  default engine is browserless, so the 80 MB download is opt-in via
+  `POSTER_INSTALL_BROWSER=1`. Global installs no longer trigger it.
+  `POSTER_SKIP_BROWSER_DOWNLOAD=1` continues to force-skip.
+- **`poster build` CLI dropped `--browser` and `--install-browser`.**
+  Build doesn't touch a browser — the flags were dead surface.
+- README: new **Engines** section explaining the takumi/chrome split and
+  the format support matrix. "No authoring restrictions" caveat for the
+  Takumi subset added.
+
+### Breaking
+
+- **`Poster.render({ format })` with the default engine only supports PNG.**
+  Calls with `format: "pdf" | "svg" | "jpg" | "webp"` now throw with a
+  clear message pointing at `--engine chrome`. SDK consumers that need
+  those formats must construct `new Poster({ engine: "chrome" })`.
+
 ## [0.4.0] — 2026-04-16
 
 ### Added

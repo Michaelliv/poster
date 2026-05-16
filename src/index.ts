@@ -6,6 +6,7 @@
 
 export type {
   BuildOptions,
+  Engine,
   ExportFormat,
   PosterInput,
   PosterOptions,

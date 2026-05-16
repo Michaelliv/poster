@@ -3,7 +3,7 @@
 
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { type ExportFormat, inferFormat, Poster } from "../poster.js";
+import { type Engine, type ExportFormat, inferFormat, Poster } from "../poster.js";
 import { EXIT_ERROR, EXIT_USER_ERROR } from "../utils/exit-codes.js";
 import {
   error,
@@ -20,6 +20,7 @@ export interface ExportArgs {
   entry: string;
   out: string;
   format?: ExportFormat;
+  engine?: Engine;
   width?: number;
   height?: number;
   deviceScaleFactor?: number;
@@ -66,6 +67,7 @@ export async function exportCmd(
 
   try {
     const poster = new Poster({
+      engine: args.engine,
       browser: args.browser,
       installBrowser: args.installBrowser,
     });

@@ -1,6 +1,8 @@
-// SDK smoke tests. Two browser-dependent tests are skipped automatically if
-// no Chrome/Chromium is resolvable (local dev without one, or CI without
-// the postinstall download).
+// SDK smoke tests. Two engine paths:
+//
+//   - Takumi (default): browserless. PNG only. Always runs.
+//   - Chrome (`engine: "chrome"`): system Chrome or chrome-headless-shell.
+//     Tests requiring it auto-skip if no browser is resolvable.
 
 import { describe, expect, test } from "bun:test";
 import { existsSync } from "node:fs";
@@ -53,14 +55,11 @@ describe("Poster SDK", () => {
     ).rejects.toThrow(/Entry not found/);
   });
 
-  test("render PNG returns a PNG buffer", async () => {
-    if (!(await haveBrowser())) {
-      return; // silent skip — browser-dependent
-    }
+  test("render PNG via default engine (takumi) returns a PNG buffer", async () => {
     const poster = new Poster();
     const result = await poster.render(
       { tsx: TRIVIAL_TSX },
-      { format: "png", width: 400, height: 300, waitFor: 0 },
+      { format: "png", width: 400, height: 300 },
     );
 
     expect(Buffer.isBuffer(result)).toBe(true);
@@ -72,6 +71,34 @@ describe("Poster SDK", () => {
     expect(buf[3]).toBe(0x47);
     expect(buf.length).toBeGreaterThan(500);
   }, 30_000);
+
+  test("render PNG via chrome engine returns a PNG buffer", async () => {
+    if (!(await haveBrowser())) {
+      return; // silent skip — browser-dependent
+    }
+    const poster = new Poster({ engine: "chrome" });
+    const result = await poster.render(
+      { tsx: TRIVIAL_TSX },
+      { format: "png", width: 400, height: 300, waitFor: 0 },
+    );
+
+    expect(Buffer.isBuffer(result)).toBe(true);
+    const buf = result as Buffer;
+    expect(buf[0]).toBe(0x89);
+    expect(buf[1]).toBe(0x50);
+    expect(buf[2]).toBe(0x4e);
+    expect(buf[3]).toBe(0x47);
+    expect(buf.length).toBeGreaterThan(500);
+  }, 30_000);
+
+  test("takumi engine rejects non-PNG formats with a clear error", async () => {
+    const poster = new Poster(); // default = takumi
+    for (const format of ["pdf", "svg", "jpg", "webp"] as const) {
+      await expect(
+        poster.render({ tsx: TRIVIAL_TSX }, { format, width: 200, height: 200 }),
+      ).rejects.toThrow(/engine "takumi" only supports PNG/);
+    }
+  });
 });
 
 describe("inferFormat", () => {

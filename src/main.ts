@@ -3,6 +3,7 @@
 import { createRequire } from "node:module";
 import { Command } from "commander";
 import { build } from "./commands/build.js";
+import type { Engine } from "./poster.js";
 import { type ExportFormat, exportCmd } from "./commands/export.js";
 
 const require = createRequire(import.meta.url);
@@ -36,11 +37,6 @@ program
     "Force canvas height (default: auto — measured from poster root)",
   )
   .option(
-    "--install-browser",
-    "Download chrome-headless-shell if no system browser is found",
-  )
-  .option("--browser <path>", "Explicit Chrome/Chromium executable")
-  .option(
     "--save <path>",
     "Where to persist stdin TSX (default: .poster/<out>.tsx)",
   )
@@ -55,8 +51,6 @@ program
         description: opts.description,
         width: opts.width !== undefined ? Number(opts.width) : undefined,
         height: opts.height !== undefined ? Number(opts.height) : undefined,
-        installBrowser: opts.installBrowser,
-        browser: opts.browser,
         save: opts.save,
         ephemeral: Boolean(opts.ephemeral),
       },
@@ -85,8 +79,13 @@ program
   )
   .option("--scale <n>", "Device scale factor (retina = 2)", "2")
   .option(
+    "--engine <name>",
+    "Rendering engine: takumi (default, browserless) | chrome",
+    "takumi",
+  )
+  .option(
     "--install-browser",
-    "Download chrome-headless-shell if no system browser is found",
+    "Download chrome-headless-shell if no system browser is found (chrome engine only)",
   )
   .option("--browser <path>", "Explicit path to a Chrome/Chromium executable")
   .option(
@@ -110,6 +109,7 @@ program
         entry,
         out: opts.out,
         format: opts.format as ExportFormat | undefined,
+        engine: opts.engine as Engine,
         width: opts.width !== undefined ? Number(opts.width) : undefined,
         height: opts.height !== undefined ? Number(opts.height) : undefined,
         deviceScaleFactor: Number(opts.scale),

@@ -20,15 +20,24 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import * as esbuild from "esbuild";
 import puppeteer from "puppeteer-core";
 import { resolveBrowser } from "./browser.js";
+import { runTakumi } from "./engines/takumi/render.js";
 
 // ---------- public types ----------
 
 export type ExportFormat = "png" | "svg" | "pdf" | "jpg" | "webp";
 
+export type Engine = "takumi" | "chrome";
+
 export type PosterInput = { tsx: string } | { file: string };
 
 export interface PosterOptions {
-  /** Explicit Chrome/Chromium executable path. */
+  /**
+   * Rendering engine. Default `"takumi"` — browserless, no Chrome download.
+   * `"chrome"` uses system Chrome / Brave / Edge or chrome-headless-shell
+   * and supports the full poster feature set (PDF, SVG, vector text).
+   */
+  engine?: Engine;
+  /** Explicit Chrome/Chromium executable path. Only used by the chrome engine. */
   browser?: string;
   /** Auto-install chrome-headless-shell (~80 MB) if no system browser is found. */
   installBrowser?: boolean;
@@ -82,7 +91,10 @@ export class Poster {
     this.options = options;
   }
 
-  /** Build a self-contained HTML string from a TSX entry. */
+  /**
+   * Build a self-contained HTML string from a TSX entry. Always uses the
+   * Chrome runtime shell — there's no HTML output for the Takumi engine.
+   */
   async buildHtml(
     input: PosterInput,
     options: BuildOptions = {},
@@ -99,13 +111,30 @@ export class Poster {
    * Render a TSX entry to its final artifact.
    *   png / jpg / webp / pdf → Buffer
    *   svg                    → string
+   *
+   * Engine defaults to `"takumi"` (browserless). PDF and SVG require
+   * `"chrome"`; we throw a clear error if the user asks for them with
+   * the Takumi engine.
    */
   async render(
     input: PosterInput,
     options: RenderOptions,
   ): Promise<Buffer | string> {
+    const engine = this.options.engine ?? "takumi";
     const entry = resolveInput(input);
     try {
+      if (engine === "takumi") {
+        if (options.format !== "png") {
+          throw new Error(
+            `engine "takumi" only supports PNG output; ` +
+              `${options.format} requires engine "chrome".`,
+          );
+        }
+        return await runTakumi(entry.path, {
+          width: options.width ?? DEFAULTS.width,
+          height: options.height,
+        });
+      }
       const html = await this.buildFromPath(entry.path, options);
       return await this.renderHtml(html, options);
     } finally {
