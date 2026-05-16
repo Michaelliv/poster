@@ -1,6 +1,6 @@
 {
   "name": "poster-ai",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Single-file distributable React posters — one .tsx file, every format you'll ever need. Works as a CLI and as a library.",
   "type": "module",
   "main": "dist/index.js",

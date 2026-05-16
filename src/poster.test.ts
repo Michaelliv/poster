@@ -95,7 +95,10 @@ describe("Poster SDK", () => {
     const poster = new Poster(); // default = takumi
     for (const format of ["pdf", "svg", "jpg", "webp"] as const) {
       await expect(
-        poster.render({ tsx: TRIVIAL_TSX }, { format, width: 200, height: 200 }),
+        poster.render(
+          { tsx: TRIVIAL_TSX },
+          { format, width: 200, height: 200 },
+        ),
       ).rejects.toThrow(/engine "takumi" only supports PNG/);
     }
   });

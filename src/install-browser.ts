@@ -34,7 +34,8 @@ function shouldDownload(): { run: boolean; reason: string } {
   }
   return {
     run: false,
-    reason: "Takumi is the default engine; set POSTER_INSTALL_BROWSER=1 to fetch chrome-headless-shell",
+    reason:
+      "Takumi is the default engine; set POSTER_INSTALL_BROWSER=1 to fetch chrome-headless-shell",
   };
 }
 

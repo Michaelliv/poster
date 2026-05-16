@@ -22,11 +22,11 @@
 // The `Renderer` is a process-wide singleton so fonts loaded once stick
 // across consecutive renders in the same process.
 
-import * as React from "react";
 import { Renderer } from "@takumi-rs/core";
-import { fromJsx } from "@takumi-rs/helpers/jsx";
 import { extractResourceUrls, fetchResources } from "@takumi-rs/helpers";
 import { extractEmojis } from "@takumi-rs/helpers/emoji";
+import { fromJsx } from "@takumi-rs/helpers/jsx";
+import * as React from "react";
 import { loadEntry } from "./compile.js";
 import { loadFontsFromLinks } from "./fonts.js";
 import { sanitizeReactTree } from "./sanitize-tree.js";
@@ -54,8 +54,12 @@ function getRenderer(): Renderer {
   return cachedRenderer;
 }
 
-function collectClassNames(node: React.ReactNode, out = new Set<string>()): Set<string> {
-  if (node === null || node === undefined || typeof node === "boolean") return out;
+function collectClassNames(
+  node: React.ReactNode,
+  out = new Set<string>(),
+): Set<string> {
+  if (node === null || node === undefined || typeof node === "boolean")
+    return out;
   if (typeof node === "string" || typeof node === "number") return out;
   if (Array.isArray(node)) {
     for (const child of node) collectClassNames(child, out);
@@ -74,9 +78,14 @@ function collectClassNames(node: React.ReactNode, out = new Set<string>()): Set<
   return out;
 }
 
-export async function runTakumi(entryPath: string, opts: TakumiOpts): Promise<Buffer> {
+export async function runTakumi(
+  entryPath: string,
+  opts: TakumiOpts,
+): Promise<Buffer> {
   await warmTailwind();
-  const entry = await loadEntry<React.ReactElement>(entryPath, { react: React });
+  const entry = await loadEntry<React.ReactElement>(entryPath, {
+    react: React,
+  });
 
   const rawRoot = entry.component({}) as React.ReactElement;
 

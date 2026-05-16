@@ -6,6 +6,8 @@ All notable changes to `poster-ai` are documented here. Format follows
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-05-15
+
 ### Added
 
 - **Takumi engine — browserless PNG export, now the default.** A pure-Rust

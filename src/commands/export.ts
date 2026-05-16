@@ -3,7 +3,12 @@
 
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { type Engine, type ExportFormat, inferFormat, Poster } from "../poster.js";
+import {
+  type Engine,
+  type ExportFormat,
+  inferFormat,
+  Poster,
+} from "../poster.js";
 import { EXIT_ERROR, EXIT_USER_ERROR } from "../utils/exit-codes.js";
 import {
   error,
@@ -98,14 +103,11 @@ export async function exportCmd(
     // non-PNG formats we fall back to the forced args — best effort.
     const scale = args.deviceScaleFactor ?? 2;
     const dims = typeof result === "string" ? null : readPngDims(result);
-    const width = dims
-      ? Math.round(dims.width / scale)
-      : (args.width ?? null);
+    const width = dims ? Math.round(dims.width / scale) : (args.width ?? null);
     const height = dims
       ? Math.round(dims.height / scale)
       : (args.height ?? null);
-    const dimsLabel =
-      width && height ? `${width}×${height}` : "auto";
+    const dimsLabel = width && height ? `${width}×${height}` : "auto";
     output(options, {
       json: () => ({
         success: true,
@@ -117,9 +119,7 @@ export async function exportCmd(
       }),
       human: () => {
         success(`Exported ${outPath}`);
-        info(
-          `${(bytes / 1024).toFixed(1)} KB · ${dimsLabel} · ${format}`,
-        );
+        info(`${(bytes / 1024).toFixed(1)} KB · ${dimsLabel} · ${format}`);
       },
     });
   } catch (err) {

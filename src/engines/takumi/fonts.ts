@@ -50,7 +50,8 @@ export function collectFontLinks(root: React.ReactNode): string[] {
   const seen = new Set<string>();
 
   const visit = (node: React.ReactNode): void => {
-    if (node === null || node === undefined || typeof node === "boolean") return;
+    if (node === null || node === undefined || typeof node === "boolean")
+      return;
     if (typeof node === "string" || typeof node === "number") return;
     if (Array.isArray(node)) {
       for (const child of node) visit(child);
@@ -90,7 +91,9 @@ export function collectFontLinks(root: React.ReactNode): string[] {
  * across multiple link tags pointing at overlapping families so the same
  * woff2 isn't loaded twice (Takumi tolerates dupes but it's wasteful).
  */
-export async function loadFontsFromLinks(root: React.ReactNode): Promise<LoadedFont[]> {
+export async function loadFontsFromLinks(
+  root: React.ReactNode,
+): Promise<LoadedFont[]> {
   const urls = collectFontLinks(root);
   if (urls.length === 0) return [];
 
@@ -115,7 +118,11 @@ export async function loadFontsFromLinks(root: React.ReactNode): Promise<LoadedF
     for (const face of parseFontFaces(css)) {
       const key = `${face.family}|${face.weight ?? ""}|${face.style ?? ""}`;
       const existing = bestFaces.get(key);
-      if (!existing || rankUnicodeRange(face.unicodeRange) > rankUnicodeRange(existing.unicodeRange)) {
+      if (
+        !existing ||
+        rankUnicodeRange(face.unicodeRange) >
+          rankUnicodeRange(existing.unicodeRange)
+      ) {
         bestFaces.set(key, face);
       }
     }
@@ -174,8 +181,7 @@ interface FontFace {
 function parseFontFaces(css: string): FontFace[] {
   const out: FontFace[] = [];
   const blockRe = /@font-face\s*\{([^}]*)\}/g;
-  let m: RegExpExecArray | null;
-  while ((m = blockRe.exec(css)) !== null) {
+  for (const m of css.matchAll(blockRe)) {
     const body = m[1];
 
     const family = pluck(body, /font-family:\s*['"]?([^;'"]+)['"]?\s*;/);
@@ -185,7 +191,7 @@ function parseFontFaces(css: string): FontFace[] {
     const unicodeRange = pluck(body, /unicode-range:\s*([^;]+);/);
     if (!family || !src) continue;
 
-    let style: FontFace["style"] = undefined;
+    let style: FontFace["style"];
     if (styleStr === "italic") style = "italic";
     else if (styleStr === "oblique") style = "oblique";
     else if (styleStr === "normal") style = "normal";
@@ -193,13 +199,19 @@ function parseFontFaces(css: string): FontFace[] {
     // Variable-font CSS uses `font-weight: 100 900;`. Pick the lower bound
     // as the registered weight — Takumi/Parley handles `font-variation-settings`
     // for the actual axis, and this number is mostly a fallback hint.
-    let weight: number | undefined = undefined;
+    let weight: number | undefined;
     if (weightStr) {
       const num = parseInt(weightStr.split(/\s+/)[0], 10);
       if (!Number.isNaN(num)) weight = num;
     }
 
-    out.push({ family: family.trim(), weight, style, src: src.trim(), unicodeRange: unicodeRange?.trim() });
+    out.push({
+      family: family.trim(),
+      weight,
+      style,
+      src: src.trim(),
+      unicodeRange: unicodeRange?.trim(),
+    });
   }
   return out;
 }
@@ -212,7 +224,8 @@ function rankUnicodeRange(range: string | undefined): number {
   // cyrillic, greek, vietnamese, etc. This intentionally mirrors the
   // browser's likely first download for Latin text.
   if (normalized.includes("U+0000-00FF")) return 3;
-  if (normalized.includes("U+0000-007F") || normalized.includes("U+0020-007E")) return 2;
+  if (normalized.includes("U+0000-007F") || normalized.includes("U+0020-007E"))
+    return 2;
   return 0;
 }
 

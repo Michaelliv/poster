@@ -3,8 +3,8 @@
 import { createRequire } from "node:module";
 import { Command } from "commander";
 import { build } from "./commands/build.js";
-import type { Engine } from "./poster.js";
 import { type ExportFormat, exportCmd } from "./commands/export.js";
+import type { Engine } from "./poster.js";
 
 const require = createRequire(import.meta.url);
 const { version } = require("../package.json");

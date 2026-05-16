@@ -27,7 +27,8 @@ export function sanitizeReactTree(root: React.ReactNode): React.ReactNode {
 }
 
 function visit(node: React.ReactNode): React.ReactNode {
-  if (node === null || node === undefined || typeof node === "boolean") return node;
+  if (node === null || node === undefined || typeof node === "boolean")
+    return node;
   if (typeof node === "string" || typeof node === "number") return node;
 
   if (Array.isArray(node)) {
@@ -121,7 +122,11 @@ function visit(node: React.ReactNode): React.ReactNode {
               ...(oldProps.style as object | undefined),
             },
           },
-          React.createElement("div", { style: { position: "absolute", inset: 0 } }, strippedSvg),
+          React.createElement(
+            "div",
+            { style: { position: "absolute", inset: 0 } },
+            strippedSvg,
+          ),
           ...textOverlays,
         );
       }
@@ -195,11 +200,12 @@ function collectSvgText(
     if (!text || !Number.isFinite(x) || !Number.isFinite(y)) return;
 
     const anchor = props.textAnchor;
-    const transform = anchor === "middle"
-      ? "translate(-50%, -50%)"
-      : anchor === "end"
-        ? "translate(-100%, -50%)"
-        : "translate(0, -50%)";
+    const transform =
+      anchor === "middle"
+        ? "translate(-50%, -50%)"
+        : anchor === "end"
+          ? "translate(-100%, -50%)"
+          : "translate(0, -50%)";
 
     const style: Record<string, unknown> = {
       position: "absolute",
@@ -207,7 +213,8 @@ function collectSvgText(
       top: `${(y / viewBox.height) * 100}%`,
       transform,
       color: props.fill ?? "currentColor",
-      textAlign: anchor === "middle" ? "center" : anchor === "end" ? "right" : "left",
+      textAlign:
+        anchor === "middle" ? "center" : anchor === "end" ? "right" : "left",
       whiteSpace: "pre",
       lineHeight: 1,
       pointerEvents: "none",
@@ -217,10 +224,16 @@ function collectSvgText(
     if (props.fontFamily !== undefined) style.fontFamily = props.fontFamily;
     if (props.fontStyle !== undefined) style.fontStyle = props.fontStyle;
 
-    overlays.push(React.createElement("div", {
-      key: `svg-text-${overlays.length}`,
-      style,
-    }, text));
+    overlays.push(
+      React.createElement(
+        "div",
+        {
+          key: `svg-text-${overlays.length}`,
+          style,
+        },
+        text,
+      ),
+    );
     return;
   }
 
@@ -228,9 +241,11 @@ function collectSvgText(
 }
 
 function stripSvgText(node: React.ReactNode): React.ReactNode {
-  if (node === null || node === undefined || typeof node === "boolean") return node;
+  if (node === null || node === undefined || typeof node === "boolean")
+    return node;
   if (typeof node === "string" || typeof node === "number") return node;
-  if (Array.isArray(node)) return node.map(stripSvgText).filter((child) => child !== null);
+  if (Array.isArray(node))
+    return node.map(stripSvgText).filter((child) => child !== null);
   if (!React.isValidElement(node)) return node;
 
   const elem = node as React.ReactElement<Record<string, unknown>>;
@@ -238,7 +253,10 @@ function stripSvgText(node: React.ReactNode): React.ReactNode {
   const props = elem.props as Record<string, unknown>;
   const children = childrenOf(props);
   if (children === undefined) return node;
-  return React.cloneElement(elem, { ...props, children: stripSvgText(children) });
+  return React.cloneElement(elem, {
+    ...props,
+    children: stripSvgText(children),
+  });
 }
 
 /**
@@ -246,12 +264,15 @@ function stripSvgText(node: React.ReactNode): React.ReactNode {
  * narrow `children` back to `ReactNode | undefined` at the boundary so call
  * sites stay readable.
  */
-function childrenOf(props: Record<string, unknown>): React.ReactNode | undefined {
+function childrenOf(
+  props: Record<string, unknown>,
+): React.ReactNode | undefined {
   return props.children as React.ReactNode | undefined;
 }
 
 function textContent(node: React.ReactNode): string {
-  if (node === null || node === undefined || typeof node === "boolean") return "";
+  if (node === null || node === undefined || typeof node === "boolean")
+    return "";
   if (typeof node === "string" || typeof node === "number") return String(node);
   if (Array.isArray(node)) return node.map(textContent).join("");
   return "";
@@ -260,7 +281,10 @@ function textContent(node: React.ReactNode): string {
 /** Parse an SVG `viewBox` string of form "x y w h" or "x, y, w, h". */
 function parseViewBox(raw: unknown): { width: number; height: number } | null {
   if (typeof raw !== "string") return null;
-  const parts = raw.trim().split(/[\s,]+/).map(Number);
+  const parts = raw
+    .trim()
+    .split(/[\s,]+/)
+    .map(Number);
   if (parts.length !== 4 || parts.some((n) => !Number.isFinite(n))) return null;
   const [, , w, h] = parts;
   if (w <= 0 || h <= 0) return null;

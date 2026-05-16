@@ -17,8 +17,8 @@
 // Modules fetched from CDNs are cached on disk at
 // `~/.cache/poster/modules/<sha256>.mjs` so subsequent renders are offline.
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 import { transform } from "sucrase";
